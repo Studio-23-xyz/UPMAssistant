@@ -137,7 +137,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
             authorEmail = EditorGUILayout.TextField("Email:", authorEmail);
             authorUrl = EditorGUILayout.TextField("URL:", authorUrl);
 
-            if (GUILayout.Button("Generate package.json", GUILayout.Height(35)))
+            if (GUILayout.Button("Generate", GUILayout.Height(35)))
             {
                 GeneratePackageJson();
             }

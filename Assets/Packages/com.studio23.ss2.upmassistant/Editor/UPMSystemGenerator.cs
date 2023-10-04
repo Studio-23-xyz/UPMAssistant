@@ -28,7 +28,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
            
         };
 
-        [MenuItem("UPM/UPMSystemGenerator", priority = 3)]
+        [MenuItem("UPM/UPM System Generator", priority = 0)]
         private static void ShowWindow()
         {
             GetWindow<UPMSystemGenerator>("Test Window");
