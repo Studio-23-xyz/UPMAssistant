@@ -15,17 +15,17 @@ namespace Studio23.SS2.UPMAssistant.Editor
         private string packageVersion = "1.0.0";
         private string packageDisplayName = "UPM Assistant";
         private string packageDescription =
-            "Streamline and enhance your game's inventory management with our Unity package. This powerful tool simplifies the creation and management of player inventories, making it easy to handle items, equipment, and resources, allowing you to focus on crafting the ultimate gaming experience.";
+            "The Unity Package Manager Structure Generator Tool is an editor extension designed to simplify the process of creating folder structures required for Unity packages that are published on https://openupm.com.";
         private string unityVersion = "2022.3";
         private string unityRelease = "9f1";
-        private string documentationUrl = "https://github.com/Studio-23-xyz/UPM-Assistant";
-        private string changelogUrl = "https://github.com/Studio-23-xyz/UPM-Assistant";
-        private string licensesUrl = "https://github.com/Studio-23-xyz/UPM-Assistant";
+        private string documentationUrl = "https://openupm.com/packages/com.studio23.ss2.upmassistant";
+        private string changelogUrl = "https://openupm.com/packages/com.studio23.ss2.upmassistant";
+        private string licensesUrl = "https://opensource.org/license/mit/";
         private string scopedRegistryName = "com.studio23.ss2";
         private string scopedRegistryUrl = "https://studio-23.xyz";
 
 
-        private List<string> scopedRegistryScopes = new List<string> {"com.studio23.ss2"};
+        private List<string> scopedRegistryScopes = new List<string> {"https://package.openupm.com"};
 
         private Dictionary<string, string> dependencies = new Dictionary<string, string>()
         {
@@ -113,10 +113,6 @@ namespace Studio23.SS2.UPMAssistant.Editor
 
             EditorGUILayout.EndVertical();
 
-
-          
-
-
             GUILayout.Label("Keywords", EditorStyles.boldLabel);
             EditorGUILayout.BeginVertical();
             for (int i = 0; i < keywords.Count; i++)
@@ -136,7 +132,6 @@ namespace Studio23.SS2.UPMAssistant.Editor
             authorName = EditorGUILayout.TextField("Name:", authorName);
             authorEmail = EditorGUILayout.TextField("Email:", authorEmail);
             authorUrl = EditorGUILayout.TextField("URL:", authorUrl);
-
             if (GUILayout.Button("Generate", GUILayout.Height(35)))
             {
                 GeneratePackageJson();
@@ -146,9 +141,6 @@ namespace Studio23.SS2.UPMAssistant.Editor
         
         private void GeneratePackageJson()
         {
-            
-
-            // Create a JSON template
             var jsonTemplate = new
             {
                 name = packageName,
@@ -189,19 +181,12 @@ namespace Studio23.SS2.UPMAssistant.Editor
         private void GenerateUMPSystem(string jsonString)
         {
             UPMSystemGenerator UPMSystemGenerator = GetWindow<UPMSystemGenerator>("UMP System Generator");
-
             Dictionary<string, string> fileData = new Dictionary<string, string>
             {
                 {"package.json", jsonString},
-                /*{"README.md", "Sample README content"},
-                {"CHANGELOG.md", "Sample CHANGELOG content"},
-                {"LICENSE.md", "Sample LICENSE content"},
-                {"ThirdPartyNotices.md", "Sample ThirdPartyNotices content"},*/
-                
             };
 
             UPMSystemGenerator.SetData(fileData);
-            // umpSystemGenerator.CreateFolderStructure("MyFolder");
         }
     }
 }
