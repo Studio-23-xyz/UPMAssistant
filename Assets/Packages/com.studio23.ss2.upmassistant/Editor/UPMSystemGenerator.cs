@@ -9,7 +9,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
     public class UPMSystemGenerator: EditorWindow
     {
         
-        private string folderName = "com.bs23.ss2.testpackage";
+        private string folderName = "com.studio23.ss2.upmassistant";
        
         private Dictionary<string, bool> folderAndFileSelection = new Dictionary<string, bool>
         {
@@ -36,7 +36,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
         
         private void OnGUI()
         {
-            GUILayout.Label("Enter Package Name");
+            GUILayout.Label("Enter Package Name: Packages/");
            
             if(PlayerPrefs.HasKey("folderName"))
             {
@@ -153,6 +153,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
                }
            }
        }
+       
+
        
     }
 }
