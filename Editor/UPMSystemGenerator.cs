@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -9,64 +10,150 @@ namespace Studio23.SS2.UPMAssistant.Editor
     public class UPMSystemGenerator: EditorWindow
     {
         
-        private string folderName = "com.studio23.ss2.upmassistant";
-       
-        private Dictionary<string, bool> folderAndFileSelection = new Dictionary<string, bool>
+        public static string Root = "Assets/Packages/";
+        private static string packageName;
+       public static string PackageName
+       {
+           get
+           {
+               packageName = "com.studio23.ss2.testproject";
+               if(PlayerPrefs.HasKey("PackageName"))
+               {
+                   packageName = PlayerPrefs.GetString("PackageName");
+                   
+               }
+               return packageName;
+           }
+           set
+           {
+               packageName = value;
+               PlayerPrefs.SetString("PackageName", packageName);
+           }
+       }
+
+       public static readonly string PACKAGE_JSON = "package.json";
+        // warning message
+        private string warningMessage = ""; // Warning message to display
+        private float warningDuration = 3f; // Duration to display the warning in seconds
+        private float warningStartTime; // Time when the warning started
+        private MessageType messageType = MessageType.Info;
+        
+        public static Dictionary<string, bool> FolderAndFilesList = new Dictionary<string, bool>
         {
-            {"package.json", true},
-            {"README.md", true},
-            {"CHANGELOG.md", true},
-            {"LICENSE.md", true},
-            {"ThirdPartyNotices.md", true},
-            {"Editor", true},
-            {"Runtime", true},
-            {"Tests", true},
-            {"Tests/Editor", true},
-            {"Tests/Runtime", true},
-            {"Samples", true},
-            {"Documentation", true},
+            {PACKAGE_JSON, false},
+            {"README.md", false},
+            {"CHANGELOG.md", false},
+            {"LICENSE.md", false},
+            {"ThirdPartyNotices.md", false},
+            {"Editor", false},
+            {"Runtime", false},
+            {"Tests", false},
+            {"Tests/Editor", false},
+            {"Tests/Runtime", false},
+            {"Samples", false},
+            {"Documentation", false},
            
         };
 
         [MenuItem("UPM/UPM System Generator", priority = 0)]
         private static void ShowWindow()
         {
-            GetWindow<UPMSystemGenerator>("Test Window");
+            GetWindow<UPMSystemGenerator>("PackageJsonGenerator Window");
+           
+           
         }
-        
+        public void LoadExistenceValue()
+        {
+            // Initialize the dictionary with file/folder existence check
+            foreach (var entry in FolderAndFilesList.ToList())
+            {
+                if (entry.Key.Contains("."))
+                {
+                    // For files, check if the file exists
+                    FolderAndFilesList[entry.Key] = File.Exists(Root + PackageName + "/" + entry.Key);
+                }
+                else
+                {
+                    // For folders, check if the folder exists
+                    FolderAndFilesList[entry.Key] = AssetDatabase.IsValidFolder(Root + PackageName + "/" + entry.Key);
+                }
+            }
+        }
+
+        private void OnEnable()
+        {
+            
+           if(PlayerPrefs.HasKey("PackageName"))
+           {
+               PackageName = PlayerPrefs.GetString("PackageName");
+           }
+           LoadExistenceValue();
+        }
+
+        public void CreateGUI()
+        {
+           
+           
+        }
         private void OnGUI()
         {
-            GUILayout.Label("Enter Package Name: Packages/");
+            
+            GUILayout.Label("Enter Package Name:");
+            GUILayout.Label("Assets:Packages/");
            
-            if(PlayerPrefs.HasKey("folderName"))
-            {
-                folderName = PlayerPrefs.GetString("folderName");
-            }
-            folderName = EditorGUILayout.TextField(folderName);
            
-            List<KeyValuePair<string, bool>> folderAndFileList = folderAndFileSelection.ToList();
-
-            foreach (var entry in folderAndFileList)
+            PackageName = EditorGUILayout.TextField(PackageName);
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Check All"))
             {
-                folderAndFileSelection[entry.Key] = EditorGUILayout.ToggleLeft(entry.Key, entry.Value);
+                foreach (var entry in FolderAndFilesList.ToList())
+                {
+                    FolderAndFilesList[entry.Key] = true;
+                }
+            }
+            if (GUILayout.Button("Uncheck All"))
+            {
+                foreach (var entry in FolderAndFilesList.ToList())
+                {
+                    FolderAndFilesList[entry.Key] = false;
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+            foreach (var entry in FolderAndFilesList.ToList())
+            {
+                FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entry.Key, entry.Value);
             }
 
+            if (!string.IsNullOrEmpty(warningMessage) && Time.realtimeSinceStartup - warningStartTime < warningDuration)
+            {
+                EditorGUILayout.HelpBox(warningMessage, messageType);
+            }
+            
             if (GUILayout.Button("Generate UMP System"))
             {
-                if(folderName == "")
+                if(PackageName == "")
                 {
                     Debug.LogError("Please enter a package name");
                     return;
                 }
-                PlayerPrefs.SetString("folderName", folderName);
-                CreateFolderStructure(folderName);
+                PlayerPrefs.SetString("PackageName", PackageName);
+                CreateFolderStructure(PackageName);
             }
+           
+           
+            
         }
 
-      
+       
+        private void ShowNotification(string message, MessageType msgType = MessageType.Info)
+        {
+            messageType = msgType;
+            warningMessage = message;
+            warningStartTime = Time.realtimeSinceStartup;
+        }
        public void CreateFolderStructure(string folderName)
        {
-           string rootPath = "Assets/Packages/" + folderName;
+           string rootPath = Root + folderName;
 
            if (!AssetDatabase.IsValidFolder(rootPath))
            {
@@ -78,7 +165,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
                Debug.Log("Root folder already exists: " + rootPath);
            }
 
-           foreach (var entry in folderAndFileSelection)
+           foreach (var entry in FolderAndFilesList)
            {
                if (entry.Value)
                {
@@ -93,7 +180,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
                }
            }
 
-           Debug.Log("Folder structure created successfully.");
+           
+           ShowNotification($"Folder structure created successfully.");
        }
 
        private static void CreateFile(string path, string fileName)
@@ -123,36 +211,35 @@ namespace Studio23.SS2.UPMAssistant.Editor
            }
        }
 
-       public void SetData(Dictionary<string, string> fileData)
+       /*public void SetData(Dictionary<string, string> fileData)
        {
            // Use the file data to populate the files while creating them
            foreach (var entry in fileData)
            {
-               if (folderAndFileSelection.ContainsKey(entry.Key) && folderAndFileSelection[entry.Key])
+               if (FolderAndFilesList.ContainsKey(entry.Key) && FolderAndFilesList[entry.Key])
                {
                    
-                   string filePath = Path.Combine("Assets/Packages/" + folderName, entry.Key);
+                   string filePath = Path.Combine(Root + PackageName, entry.Key);
                    if (!File.Exists(filePath))
                    {
                        // show warning
                        Debug.LogError($"Create {entry.Key} using UPM Generator");
-                      
                    }
                    else
                    {
                        File.WriteAllText(filePath, entry.Value);
-                       Debug.Log("File created with data: " + filePath);
-                       // CreateFolderStructure(folderName);
+                       // CreateFolderStructure(PackageName);
+                       ShowNotification($"File created with data: " + filePath);
                    }
-
-                  
                }
                else
                {
-                   Debug.Log($"File {entry.Key} not found.");
+                   ShowNotification($"File {entry.Key} not found. Create {entry.Key} using UPM Generator.", MessageType.Warning);
                }
+               
            }
-       }
+       } */
+
        
 
        
