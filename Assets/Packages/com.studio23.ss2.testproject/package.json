@@ -1,0 +1,40 @@
+{
+  "name": "com.studio23.ss2.testproject",
+  "version": "1.0.0",
+  "displayName": "UPM Assistant",
+  "description": "The Unity Package Manager Structure Generator Tool is an editor extension designed to simplify the process of creating folder structures required for Unity packages that are published on https://openupm.com.",
+  "unityVersion": "2022.3",
+  "unityRelease": "9f1",
+  "documentationUrl": "https://openupm.com/packages/com.studio23.ss2.upmassistant",
+  "changelogUrl": "https://openupm.com/packages/com.studio23.ss2.upmassistant",
+  "licensesUrl": "https://opensource.org/license/mit/",
+  "scopedRegistryName": "com.studio23.ss2",
+  "scopedRegistryUrl": "https://studio-23.xyz",
+  "scopedRegistryScopes": [
+    "https://package.openupm.com"
+  ],
+  "dependencies": [
+    {
+      "name": "com.unity.nuget.newtonsoft-json",
+      "version": "3.2.1"
+    },
+    {
+      "name": "fffffffffffffff",
+      "version": "ffffffffffffff"
+    },
+    {
+      "name": "dddddddd",
+      "version": "dddddd"
+    }
+  ],
+  "keywords": [
+    "UPM",
+    "Assistant",
+    "System",
+    "dddddddddddddrer",
+    "fffffffffffffffff"
+  ],
+  "authorName": "Studio 23",
+  "authorEmail": "contact@studio-23.xyz",
+  "authorUrl": "https://studio-23.xyz"
+}
