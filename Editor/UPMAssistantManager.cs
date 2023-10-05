@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Studio23.SS2.UPMAssistant.Editor
 {
-    public class UPMSystemGenerator: EditorWindow
+    public class UPMAssistantManager: EditorWindow
     {
         
         public static string Root = "Assets/Packages/";
@@ -56,9 +56,9 @@ namespace Studio23.SS2.UPMAssistant.Editor
         };
 
         [MenuItem("UPM/UPM System Generator", priority = 0)]
-        private static void ShowWindow()
+        public static void ShowWindow()
         {
-            GetWindow<UPMSystemGenerator>("PackageJsonGenerator Window");
+            GetWindow<UPMAssistantManager>("PackageJsonController Window");
            
            
         }
@@ -90,28 +90,25 @@ namespace Studio23.SS2.UPMAssistant.Editor
            LoadExistenceValue();
         }
 
-        public void CreateGUI()
-        {
-           
-           
-        }
+        
         private void OnGUI()
         {
-            
-            GUILayout.Label("Enter Package Name:");
-            GUILayout.Label("Assets:Packages/");
+            GUILayout.Label("Enter Package Name:", EditorStyles.boldLabel);
+            GUILayout.Label("Assets/Packages/", EditorStyles.boldLabel);
+
+            // Use custom colors for the GUI elements
            
-           
-            PackageName = EditorGUILayout.TextField(PackageName);
+            PackageName = EditorGUILayout.TextField("Package Name", PackageName, GUILayout.Width(position.width - 20));
+
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Check All"))
+            if (GUILayout.Button("Check All", GUILayout.Width(position.width / 2 - 10)))
             {
                 foreach (var entry in FolderAndFilesList.ToList())
                 {
                     FolderAndFilesList[entry.Key] = true;
                 }
             }
-            if (GUILayout.Button("Uncheck All"))
+            if (GUILayout.Button("Uncheck All", GUILayout.Width(position.width / 2 - 10)))
             {
                 foreach (var entry in FolderAndFilesList.ToList())
                 {
@@ -119,29 +116,25 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 }
             }
             EditorGUILayout.EndHorizontal();
+
             foreach (var entry in FolderAndFilesList.ToList())
             {
-                FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entry.Key, entry.Value);
+                FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entry.Key, entry.Value, GUILayout.Width(position.width - 20));
             }
 
-            if (!string.IsNullOrEmpty(warningMessage) && Time.realtimeSinceStartup - warningStartTime < warningDuration)
+            GUI.backgroundColor = Color.green;
+            if (GUILayout.Button("Generate UPM System", GUILayout.Height(40)))
             {
-                EditorGUILayout.HelpBox(warningMessage, messageType);
-            }
-            
-            if (GUILayout.Button("Generate UMP System"))
-            {
-                if(PackageName == "")
+                if (PackageName == "")
                 {
-                    Debug.LogError("Please enter a package name");
+                    ShowNotification("Please enter a package name", MessageType.Error);
                     return;
                 }
                 PlayerPrefs.SetString("PackageName", PackageName);
                 CreateFolderStructure(PackageName);
             }
-           
-           
-            
+
+            GUI.backgroundColor = Color.white; // Reset the background color
         }
 
        
