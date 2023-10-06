@@ -71,7 +71,7 @@ private void OnGUI()
     
     EditorGUI.BeginDisabledGroup(true); // Begin disabled group
     EditorGUILayout.BeginHorizontal();
-    jsonData.unityVersion = EditorGUILayout.TextField("Unity Version:", jsonData.unityVersion);
+    jsonData.unity = EditorGUILayout.TextField("Unity Version:", jsonData.unity);
     jsonData.unityRelease = EditorGUILayout.TextField("Unity Release:", jsonData.unityRelease);
     EditorGUILayout.EndHorizontal();
     EditorGUI.EndDisabledGroup(); // End disabled group
@@ -79,7 +79,7 @@ private void OnGUI()
     jsonData.documentationUrl = EditorGUILayout.TextField("Documentation URL:", jsonData.documentationUrl);
     jsonData.changelogUrl = EditorGUILayout.TextField("Changelog URL:", jsonData.changelogUrl);
     jsonData.licensesUrl = EditorGUILayout.TextField("Licenses URL:", jsonData.licensesUrl);
-
+/*
     GUILayout.Space(20); // Add vertical space between sections
 
     GUILayout.Label("Scoped Registries", EditorStyles.boldLabel);
@@ -100,8 +100,26 @@ private void OnGUI()
     EditorGUILayout.EndHorizontal();
     
     GUILayout.Space(20); // Add vertical space between sections
+*/
 
-    GUILayout.Label("Dependencies", EditorStyles.boldLabel);
+
+    GUILayout.Space(20); // Add vertical space between sections
+    GUILayout.Label("Scoped Registries", EditorStyles.boldLabel);
+    foreach (var scopedRegistry in jsonData.scopedRegistries)
+    {
+        scopedRegistry.name = EditorGUILayout.TextField("Name:", scopedRegistry.name);
+        scopedRegistry.url = EditorGUILayout.TextField("URL:", scopedRegistry.url);
+        EditorGUILayout.LabelField("Scopes:");
+        for (int i = 0; i < scopedRegistry.scopes.Count; i++)
+        {
+            scopedRegistry.scopes[i] = EditorGUILayout.TextField($"Scope {i + 1}:", scopedRegistry.scopes[i]);
+        }
+    }
+    GUILayout.Space(10); // Add vertical space between scopes and buttons
+    
+    
+    
+    /*GUILayout.Label("Dependencies", EditorStyles.boldLabel);
     for (int i = 0; i < jsonData.dependencies.Count; i++)
     {
         EditorGUILayout.BeginHorizontal();
@@ -120,8 +138,45 @@ private void OnGUI()
         jsonData.dependencies.Add(new PackageDependency());
     }
 
+    GUILayout.Space(20); // Add vertical space between sections*/
+
+    
+    GUILayout.Label("Dependencies", EditorStyles.boldLabel);
+    foreach (var dependency in jsonData.dependencies)
+    {
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Space(20); // Add left padding
+
+        string dependencyName = EditorGUILayout.TextField("Name:", dependency.Key);
+        string dependencyVersion = EditorGUILayout.TextField("Version:", dependency.Value);
+
+        // Update the dictionary entry if the name has changed
+        if (dependencyName != dependency.Key)
+        {
+            jsonData.dependencies.Remove(dependency.Key);
+            jsonData.dependencies[dependencyName] = dependencyVersion;
+        }
+
+        if (GUILayout.Button("Remove", GUILayout.Width(80)))
+        {
+            // Remove the dictionary entry based on the key
+            jsonData.dependencies.Remove(dependency.Key);
+            break; // Exit the loop after removal
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+
+    if (GUILayout.Button("Add Dependency", GUILayout.Width(150)))
+    {
+        // Add a new empty entry to the dictionary
+        jsonData.dependencies.Add("NewPackageName", "NewVersion");
+    }
+
     GUILayout.Space(20); // Add vertical space between sections
 
+    
+    
+    
     GUILayout.Label("Keywords", EditorStyles.boldLabel);
     for (int i = 0; i < jsonData.keywords.Count; i++)
     {
@@ -146,13 +201,13 @@ private void OnGUI()
     
     EditorGUI.BeginDisabledGroup(true); // Begin disabled group
     EditorGUILayout.BeginHorizontal();
-    jsonData.authorName = EditorGUILayout.TextField("Name:", jsonData.authorName);
+    jsonData.author.name = EditorGUILayout.TextField("Name:", jsonData.author.name);
     GUILayout.Label($"Project Settings -> Player Settings -> Company Name", EditorStyles.label);
     EditorGUILayout.EndHorizontal();
     EditorGUI.EndDisabledGroup();
     
-    jsonData.authorEmail = EditorGUILayout.TextField("Email:", jsonData.authorEmail);
-    jsonData.authorUrl = EditorGUILayout.TextField("URL:", jsonData.authorUrl);
+    jsonData.author.email = EditorGUILayout.TextField("Email:", jsonData.author.email);
+    jsonData.author.url = EditorGUILayout.TextField("URL:", jsonData.author.url);
 
     GUILayout.Space(10); // Add vertical space
 
@@ -234,22 +289,33 @@ private void OnGUI()
             jsonData.displayName = Application.productName; // UPM Assistant
             jsonData.description = "The UPM Assistant is an editor extension tool designed to simplify the process of creating folder structures required for Unity packages that are published on  openupm.com. This tool automates the generation of the necessary directory hierarchy, ensuring that package assets are organized correctly and adhere to the standards of Unity's package management system.";
             string[] unityVersion = Application.unityVersion.Split(".");
-            jsonData.unityVersion = unityVersion[0] +"."+ unityVersion[1];//"2022.3";
+            jsonData.unity = unityVersion[0] +"."+ unityVersion[1];//"2022.3";
             jsonData.unityRelease = unityVersion[2]; //"9f1";
             jsonData.documentationUrl = "https://openupm.com/packages/com.studio23.ss2.upmassistant";
             jsonData.changelogUrl = "https://openupm.com/packages/com.studio23.ss2.upmassistant";
             jsonData.licensesUrl = "https://opensource.org/license/mit/";
-            jsonData.scopedRegistryName = "com.studio23.ss2";
-            jsonData.scopedRegistryUrl = "https://studio-23.xyz";
-            jsonData.scopedRegistryScopes = new List<string> { "https://package.openupm.com" };
-            jsonData.dependencies = new List<PackageDependency>
+
+            ScopedRegistry scopedRegistry = new ScopedRegistry()
             {
-                new PackageDependency { name = "com.unity.nuget.newtonsoft-json", version = "3.2.1" }
+                name = "Studio 23",
+                url = "https://package.openupm.com",
+                scopes = new List<string> { "com.studio23.ss2"}
             };
+            jsonData.scopedRegistries = new List<ScopedRegistry>
+            {
+                scopedRegistry,
+            };
+           
+           
+            jsonData.dependencies = new Dictionary<string, string>(){
+                {"com.unity.nuget.newtonsoft-json", "3.2.1"},
+                
+            };
+            
             jsonData.keywords = new List<string> { "UPM", "Assistant", "System" };
-            jsonData.authorName = Application.companyName;// Studio 23
-            jsonData.authorEmail = "contact@studio-23.xyz";
-            jsonData.authorUrl = "https://studio-23.xyz";
+            jsonData.author.name = Application.companyName;// Studio 23
+            jsonData.author.email = "contact@studio-23.xyz";
+            jsonData.author.url = "https://studio-23.xyz";
         } 
         private void ShowNotification(string message, MessageType msgType = MessageType.Info)
         {

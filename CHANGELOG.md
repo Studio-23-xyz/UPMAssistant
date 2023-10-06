@@ -1,5 +1,5 @@
- ## [1.0.0](2023-10-03)
+ ## [1.0.1](2023-10-03)
 
- - Initial submission for package distribution.
- 
+ - System generator updated.
+ - package.json bug fixed.
  
