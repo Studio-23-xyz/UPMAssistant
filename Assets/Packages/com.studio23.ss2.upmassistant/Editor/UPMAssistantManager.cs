@@ -82,7 +82,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
             // Use custom colors for the GUI elements
             if (string.IsNullOrEmpty(packageName))
             {
-                packageName = "com.studio23.ss2.testproject";
+                packageName = PlayerPrefs.GetString("packageName","com.[companyname].[project].[packagename]");
             }
             packageName = EditorGUILayout.TextField("Package Name", packageName, GUILayout.Width(position.width - 20));
 
@@ -108,7 +108,9 @@ namespace Studio23.SS2.UPMAssistant.Editor
                
                 FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entry.Key, entry.Value, GUILayout.Width(position.width - 20));
 
-                if (entry.Key.Contains("."))
+               
+                string extension = entry.Key.Split(".").LastOrDefault();
+                if (entry.Key.Contains(".") && extension == "asmdef")
                 {
                     EditorGUILayout.BeginHorizontal();
                     if (GUILayout.Button("Configure"))
@@ -129,6 +131,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
                     ShowNotification("Please enter a package name", MessageType.Error);
                     return;
                 }
+                
+                PlayerPrefs.SetString("packageName", packageName);
                 
                 CreateFolderStructure(packageName);
             }
