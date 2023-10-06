@@ -8,18 +8,26 @@ namespace Studio23.SS2.UPMAssistant.Editor
         public string version;
         public string displayName;
         public string description;
-        public string unityVersion;
+        public string unity;
         public string unityRelease;
         public string documentationUrl;
         public string changelogUrl;
         public string licensesUrl;
-        public string scopedRegistryName;
-        public string scopedRegistryUrl;
-        public List<ScopedRegistry> scopedRegistryScopes = new List<ScopedRegistry>();
-        public List<PackageDependency> dependencies = new List<PackageDependency>();
+        public List<ScopedRegistry> scopedRegistries = new List<ScopedRegistry>();
+        public Dictionary<string, string> dependencies = new Dictionary<string, string>();
         public List<string> keywords = new List<string>();
-        public string authorName;
+        
+       
+        /*public string authorName;
         public string authorEmail;
-        public string authorUrl;
+        public string authorUrl;*/
+        public Author author = new Author();
+    }
+
+    public class Author
+    {
+        public string name;
+        public string email;
+        public string url;
     }
 }
