@@ -21,8 +21,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
         private float warningStartTime; // Time when the warning started
         private MessageType messageType = MessageType.Info;
         
-        [MenuItem("UPM/package.json Generator", priority = 1)]
-        static void CreateWizard()
+        
+        public static void CreateWizard()
         {
             PackageJsonController window = GetWindow<PackageJsonController>(true, "Generate package.json");
             window.Show();
@@ -36,7 +36,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
         private void LoadPreDefineValue()
         {
             jsonData = new PackageJsonData();
-            filePath = Path.Combine(UPMAssistantManager.Root + UPMAssistantManager.PackageName, UPMAssistantManager.PACKAGE_JSON);
+            filePath = Path.Combine(UPMAssistantManager.Root + UPMAssistantManager.packageName, UPMAssistantManager.PACKAGE_JSON);
             LoadData();
         }
     
@@ -229,7 +229,7 @@ private void OnGUI()
         }
         private void AssignPreDefaultValues()
         {
-            jsonData.name = UPMAssistantManager.PackageName;
+            jsonData.name = UPMAssistantManager.packageName;
             jsonData.version = Application.version; // 1.0.1
             jsonData.displayName = Application.productName; // UPM Assistant
             jsonData.description = "The UPM Assistant is an editor extension tool designed to simplify the process of creating folder structures required for Unity packages that are published on  openupm.com. This tool automates the generation of the necessary directory hierarchy, ensuring that package assets are organized correctly and adhere to the standards of Unity's package management system.";

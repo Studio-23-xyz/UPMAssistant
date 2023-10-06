@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Compilation;
+using UnityEditorInternal;
 using UnityEngine;
 
 namespace Studio23.SS2.UPMAssistant.Editor
@@ -11,25 +13,9 @@ namespace Studio23.SS2.UPMAssistant.Editor
     {
         
         public static string Root = "Assets/Packages/";
-        private static string packageName;
-       public static string PackageName
-       {
-           get
-           {
-               packageName = "com.studio23.ss2.testproject";
-               if(PlayerPrefs.HasKey("PackageName"))
-               {
-                   packageName = PlayerPrefs.GetString("PackageName");
-                   
-               }
-               return packageName;
-           }
-           set
-           {
-               packageName = value;
-               PlayerPrefs.SetString("PackageName", packageName);
-           }
-       }
+        public static string packageName;
+        
+       
 
        public static readonly string PACKAGE_JSON = "package.json";
         // warning message
@@ -46,6 +32,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
             {"LICENSE.md", false},
             {"ThirdPartyNotices.md", false},
             {"Editor", false},
+            {$"Editor/[[packagename]].editor.asmdef", false},
             {"Runtime", false},
             {"Tests", false},
             {"Tests/Editor", false},
@@ -55,7 +42,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
            
         };
 
-        [MenuItem("UPM/UPM System Generator", priority = 0)]
+        [MenuItem("Studio-23/UPM Assistant/Generator", priority = 0)]
         public static void ShowWindow()
         {
             GetWindow<UPMAssistantManager>("PackageJsonController Window");
@@ -70,23 +57,19 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 if (entry.Key.Contains("."))
                 {
                     // For files, check if the file exists
-                    FolderAndFilesList[entry.Key] = File.Exists(Root + PackageName + "/" + entry.Key);
+                    FolderAndFilesList[entry.Key] = File.Exists(Root + packageName + "/" + entry.Key);
                 }
                 else
                 {
                     // For folders, check if the folder exists
-                    FolderAndFilesList[entry.Key] = AssetDatabase.IsValidFolder(Root + PackageName + "/" + entry.Key);
+                    FolderAndFilesList[entry.Key] = AssetDatabase.IsValidFolder(Root + packageName + "/" + entry.Key);
                 }
             }
         }
 
         private void OnEnable()
         {
-            
-           if(PlayerPrefs.HasKey("PackageName"))
-           {
-               PackageName = PlayerPrefs.GetString("PackageName");
-           }
+           
            LoadExistenceValue();
         }
 
@@ -97,8 +80,11 @@ namespace Studio23.SS2.UPMAssistant.Editor
             GUILayout.Label("Assets/Packages/", EditorStyles.boldLabel);
 
             // Use custom colors for the GUI elements
-           
-            PackageName = EditorGUILayout.TextField("Package Name", PackageName, GUILayout.Width(position.width - 20));
+            if (string.IsNullOrEmpty(packageName))
+            {
+                packageName = "com.studio23.ss2.testproject";
+            }
+            packageName = EditorGUILayout.TextField("Package Name", packageName, GUILayout.Width(position.width - 20));
 
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Check All", GUILayout.Width(position.width / 2 - 10)))
@@ -119,19 +105,32 @@ namespace Studio23.SS2.UPMAssistant.Editor
 
             foreach (var entry in FolderAndFilesList.ToList())
             {
+               
                 FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entry.Key, entry.Value, GUILayout.Width(position.width - 20));
+
+                if (entry.Key.Contains("."))
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    if (GUILayout.Button("Configure"))
+                    {
+                        PackageJsonController.CreateWizard();
+                    }
+                    EditorGUILayout.EndHorizontal();
+                }
+                    
+                    
             }
 
             GUI.backgroundColor = Color.green;
             if (GUILayout.Button("Generate UPM System", GUILayout.Height(40)))
             {
-                if (PackageName == "")
+                if (packageName == "")
                 {
                     ShowNotification("Please enter a package name", MessageType.Error);
                     return;
                 }
-                PlayerPrefs.SetString("PackageName", PackageName);
-                CreateFolderStructure(PackageName);
+                
+                CreateFolderStructure(packageName);
             }
 
             GUI.backgroundColor = Color.white; // Reset the background color
@@ -177,10 +176,18 @@ namespace Studio23.SS2.UPMAssistant.Editor
            ShowNotification($"Folder structure created successfully.");
        }
 
-       private static void CreateFile(string path, string fileName)
+       private void CreateFile(string path, string fileName)
        {
+           
+           string extension = fileName.Split(".").LastOrDefault();
+           
            string filePath = Path.Combine(path, fileName);
-           if (!File.Exists(filePath))
+           if (!File.Exists(filePath) && extension == "asmdef")
+           {
+
+               CreateEditorAssemblyDefinition( path,  fileName);
+           }
+           else if (!File.Exists(filePath))
            {
                File.WriteAllText(filePath, string.Empty);
                Debug.Log("File created: " + filePath);
@@ -204,6 +211,34 @@ namespace Studio23.SS2.UPMAssistant.Editor
            }
        }
 
+       void CreateEditorAssemblyDefinition(string path, string fileName)
+       {
+           string filePath = Path.Combine(path,$"{fileName.Replace("[[packagename]]",$"{packageName}")}");
+
+           // Define the content of the assembly definition file
+           string assemblyDefinitionContent = 
+               "{\n" +
+               $"  \"name\": \"{packageName}.editor\",\n" +
+               "  \"references\": [],\n" +
+               "  \"optionalUnityReferences\": [],\n" +
+               "  \"includePlatforms\": [\"Editor\"],\n" +
+               "  \"excludePlatforms\": [],\n" +
+               "  \"allowUnsafeCode\": false,\n" +
+               "  \"overrideReferences\": false,\n" +
+               "  \"precompiledReferences\": [],\n" +
+               "  \"autoReferenced\": true,\n" +
+               "  \"defineConstraints\": []\n" +
+               "}";
+
+           // Write the content to the file
+           File.WriteAllText(filePath, assemblyDefinitionContent);
+
+           // Refresh the AssetDatabase to let Unity know about the new file
+           AssetDatabase.Refresh();
+
+           Debug.Log("Assembly Definition file created at: " + path);
+       }
+       
        /*public void SetData(Dictionary<string, string> fileData)
        {
            // Use the file data to populate the files while creating them
