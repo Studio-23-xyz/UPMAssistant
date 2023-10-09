@@ -35,8 +35,10 @@ namespace Studio23.SS2.UPMAssistant.Editor
             {$"Editor/[[packagename]].editor.asmdef", false},
             {"Runtime", false},
             {"Tests", false},
-            {"Tests/Editor", false},
-            {"Tests/Runtime", false},
+            {"Tests/EditMode", false},
+            {$"Tests/EditMode/editmode.tests.asmdef", false},
+            {"Tests/PlayMode", false},
+            {$"Tests/PlayMode/playmode.tests.asmdef", false},
             {"Samples", false},
             {"Documentation", false},
            
@@ -89,30 +91,95 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 packageName = PlayerPrefs.GetString("packageName","com.[companyname].[project].[packagename]");
             }
         }
+        private void DeleteFolder(string folderPath)
+        {
+            // Check if the folder exists
+            if (Directory.Exists(folderPath))
+            {
+                // Delete all files in the folder
+                string[] files = Directory.GetFiles(folderPath);
+                foreach (string file in files)
+                {
+                    File.Delete(file);
+                }
+
+                // Delete all subdirectories and their contents
+                string[] subdirectories = Directory.GetDirectories(folderPath);
+                foreach (string subdirectory in subdirectories)
+                {
+                    DeleteFolder(subdirectory);
+                }
+
+                // Finally, delete the main folder
+                Directory.Delete(folderPath);
+                Debug.Log("Folder deleted: " + folderPath);
+            }
+            else
+            {
+                Debug.LogWarning("Folder not found: " + folderPath);
+            }
+        }
         private void OnGUI()
         {
-            GUILayout.Label("Enter Package Name:", EditorStyles.boldLabel);
-            GUILayout.Label("Assets/Packages/", EditorStyles.boldLabel);
-
-            LoadPackageName();
-            packageName = EditorGUILayout.TextField("Package Name", packageName, GUILayout.Width(position.width - 20));
-
+            
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Check All", GUILayout.Width(position.width / 2 - 10)))
+            if (GUILayout.Button("Check All", GUILayout.Width(position.width / 4 - 5)))
             {
                 foreach (var entry in FolderAndFilesList.ToList())
                 {
                     FolderAndFilesList[entry.Key] = true;
                 }
             }
-            if (GUILayout.Button("Uncheck All", GUILayout.Width(position.width / 2 - 10)))
+            if (GUILayout.Button("Uncheck All", GUILayout.Width(position.width / 4 - 5)))
             {
                 foreach (var entry in FolderAndFilesList.ToList())
                 {
                     FolderAndFilesList[entry.Key] = false;
                 }
             }
+            if (GUILayout.Button("Refresh", GUILayout.Width(position.width / 4 - 5)))
+            {
+                Refresh();
+            }
+            if (GUILayout.Button("Delete System", GUILayout.Width(position.width / 4 - 5)))
+            {
+                if (PlayerPrefs.HasKey("packageName"))
+                {
+                    bool userConfirmed = EditorUtility.DisplayDialog("Delete Folder",
+                        "Are you sure you want to delete the folder and its contents?",
+                        "Yes", "No");
+
+                    if (userConfirmed)
+                    {
+                        DeleteFolder(Root+packageName);
+                        PlayerPrefs.DeleteKey("packageName");
+                        Refresh();
+                        ShowNotification("Folder deleted successfully.");
+                    }
+                    else
+                    {
+                       
+                        ShowNotification("Deletion cancelled by user.");
+                    }
+                }
+                else
+                {
+                    ShowNotification("Nothing to delete.");
+                }
+                
+                    
+                    
+            }
             EditorGUILayout.EndHorizontal();
+            
+            
+            GUILayout.Label("Enter Package Name:", EditorStyles.boldLabel);
+           
+
+            LoadPackageName();
+            packageName = EditorGUILayout.TextField("Assets/Packages/", packageName, GUILayout.Width(position.width - 20));
+
+         
 
             bool _isCreateAsseblyDefinition_Editor = false;
             foreach (var entry in FolderAndFilesList.ToList())
@@ -151,6 +218,11 @@ namespace Studio23.SS2.UPMAssistant.Editor
                     
             }
 
+            if (!string.IsNullOrEmpty(warningMessage) && Time.realtimeSinceStartup - warningStartTime < warningDuration)
+            {
+                EditorGUILayout.HelpBox(warningMessage, messageType);
+            }
+            
             GUI.backgroundColor = Color.green;
             if (GUILayout.Button("Generate UPM System", GUILayout.Height(40)))
             {
@@ -248,28 +320,86 @@ namespace Studio23.SS2.UPMAssistant.Editor
            string filePath = Path.Combine(path,$"{fileName.Replace("[[packagename]]",$"{packageName}")}");
 
            // Define the content of the assembly definition file
-           string assemblyDefinitionContent = 
-               "{\n" +
-               $"  \"name\": \"{packageName}.editor\",\n" +
-               "  \"references\": [],\n" +
-               "  \"optionalUnityReferences\": [],\n" +
-               "  \"includePlatforms\": [\"Editor\"],\n" +
-               "  \"excludePlatforms\": [],\n" +
-               "  \"allowUnsafeCode\": false,\n" +
-               "  \"overrideReferences\": false,\n" +
-               "  \"precompiledReferences\": [],\n" +
-               "  \"autoReferenced\": true,\n" +
-               "  \"defineConstraints\": []\n" +
-               "}";
-
-           // Write the content to the file
-           File.WriteAllText(filePath, assemblyDefinitionContent);
-
+           string assemblyDefinitionContent = GetAssemblyDefinitionContent(fileName);
            
-
-           Debug.Log("Assembly Definition file created at: " + path);
+           //if(string.IsNullOrEmpty(assemblyDefinitionContent)) 
+               File.WriteAllText(filePath, assemblyDefinitionContent);
+          
        }
-       
+
+       private string GetAssemblyDefinitionContent(string fileName)
+       {
+           string assemblyDefinitionContent = "";
+
+           if (fileName.Contains(".editor"))
+           {
+               assemblyDefinitionContent = 
+                   "{\n" +
+                   $"  \"name\": \"{packageName}.editor\",\n" +
+                   "  \"references\": [],\n" +
+                   "  \"optionalUnityReferences\": [],\n" +
+                   "  \"includePlatforms\": [\"Editor\"],\n" +
+                   "  \"excludePlatforms\": [],\n" +
+                   "  \"allowUnsafeCode\": false,\n" +
+                   "  \"overrideReferences\": false,\n" +
+                   "  \"precompiledReferences\": [],\n" +
+                   "  \"autoReferenced\": true,\n" +
+                   "  \"defineConstraints\": []\n" +
+                   "}";
+           }else if (fileName.Contains(".tests"))
+           {
+               if (fileName.Contains("editmode"))
+               {
+                    assemblyDefinitionContent =
+                       "{\n" +
+                       $"  \"name\": \"editmode.tests\",\n" +
+                       "  \"allowUnsafeCode\": false,\n" +
+                       "  \"autoReferenced\": false,\n" +
+                       "  \"overrideReferences\": true,\n" +
+                       "  \"references\": [\n" +
+                       "    \"UnityEngine.TestRunner\",\n" +
+                       "    \"UnityEditor.TestRunner\"\n" +
+                       "  ],\n" +
+                       "  \"optionalUnityReferences\": [],\n" +
+                       "  \"includePlatforms\": [\"Editor\"],\n" +
+                       "  \"excludePlatforms\": [],\n" +
+                       "  \"precompiledReferences\": [\n" +
+                       "    \"nunit.framework.dll\"\n" + 
+                       "  ],\n" +
+                       "  \"defineConstraints\": [\n" +
+                       "    \"UNITY_INCLUDE_TESTS\"\n" +
+                       "  ]\n" +
+                       "}";
+               }
+               else if (fileName.Contains("playmode"))
+               {
+                   assemblyDefinitionContent =
+                       "{\n" +
+                       $"  \"name\": \"playmode.tests\",\n" +
+                       "  \"allowUnsafeCode\": false,\n" +
+                       "  \"autoReferenced\": false,\n" +
+                       "  \"overrideReferences\": true,\n" +
+                       "  \"references\": [\n" +
+                       "    \"UnityEngine.TestRunner\",\n" +
+                       "    \"UnityEditor.TestRunner\"\n" +
+                       "  ],\n" +
+                       "  \"optionalUnityReferences\": [],\n" +
+                       "  \"includePlatforms\": [],\n" +
+                       "  \"excludePlatforms\": [],\n" +
+                       "  \"precompiledReferences\": [\n" +
+                       "    \"nunit.framework.dll\"\n" + 
+                       "  ],\n" +
+                       "  \"defineConstraints\": [\n" +
+                       "    \"UNITY_INCLUDE_TESTS\"\n" +
+                       "  ]\n" +
+                       "}";
+               }
+               
+           }
+           
+           
+           return assemblyDefinitionContent;
+       }
        /*public void SetData(Dictionary<string, string> fileData)
        {
            // Use the file data to populate the files while creating them
