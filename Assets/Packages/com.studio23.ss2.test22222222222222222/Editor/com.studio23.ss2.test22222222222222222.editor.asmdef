@@ -1,0 +1,12 @@
+{
+  "name": "com.studio23.ss2.test22222222222222222.editor",
+  "references": [],
+  "optionalUnityReferences": [],
+  "includePlatforms": ["Editor"],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": []
+}
