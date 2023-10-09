@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEditor;
@@ -79,28 +80,6 @@ private void OnGUI()
     jsonData.documentationUrl = EditorGUILayout.TextField("Documentation URL:", jsonData.documentationUrl);
     jsonData.changelogUrl = EditorGUILayout.TextField("Changelog URL:", jsonData.changelogUrl);
     jsonData.licensesUrl = EditorGUILayout.TextField("Licenses URL:", jsonData.licensesUrl);
-/*
-    GUILayout.Space(20); // Add vertical space between sections
-
-    GUILayout.Label("Scoped Registries", EditorStyles.boldLabel);
-    EditorGUILayout.BeginHorizontal();
-    GUILayout.Space(20); // Add left padding
-    EditorGUILayout.BeginVertical();
-    
-    jsonData.scopedRegistryName = EditorGUILayout.TextField("Name:", jsonData.scopedRegistryName);
-    jsonData.scopedRegistryUrl = EditorGUILayout.TextField("URL:", jsonData.scopedRegistryUrl);
-    
-    EditorGUILayout.LabelField("Scopes:");
-    for (int i = 0; i < jsonData.scopedRegistryScopes.Count; i++)
-    {
-        jsonData.scopedRegistryScopes[i] = EditorGUILayout.TextField($"Scope {i + 1}:", jsonData.scopedRegistryScopes[i]);
-    }
-    GUILayout.Space(10); // Add vertical space between scopes and buttons
-    EditorGUILayout.EndVertical();
-    EditorGUILayout.EndHorizontal();
-    
-    GUILayout.Space(20); // Add vertical space between sections
-*/
 
 
     GUILayout.Space(20); // Add vertical space between sections
@@ -118,45 +97,59 @@ private void OnGUI()
     GUILayout.Space(10); // Add vertical space between scopes and buttons
     
     
+    #region Dependencies
+    GUILayout.Label("Dependencies", EditorStyles.boldLabel);
     
-    /*GUILayout.Label("Dependencies", EditorStyles.boldLabel);
+    /*var dependenciesKeys = jsonData.dependencies.Keys.ToList();
+    var dependenciesValues = jsonData.dependencies.Values.ToList();
+
     for (int i = 0; i < jsonData.dependencies.Count; i++)
     {
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(20); // Add left padding
-        jsonData.dependencies[i].name = EditorGUILayout.TextField("Name:", jsonData.dependencies[i].name);
-        jsonData.dependencies[i].version = EditorGUILayout.TextField("Version:", jsonData.dependencies[i].version);
+
+        string dependencyName = EditorGUILayout.TextField("Name:", dependenciesKeys[i]);
+        string dependencyVersion = EditorGUILayout.TextField("Version:", dependenciesValues[i]);
+
+        // Update the dictionary entry if the name has changed
+        if (dependencyName != dependenciesKeys[i])
+        {
+            jsonData.dependencies.Remove(dependenciesKeys[i]);
+            jsonData.dependencies[dependencyName] = dependencyVersion;
+        }else if( dependencyVersion != dependenciesValues[i])
+        {
+            jsonData.dependencies[dependencyName] = dependencyVersion;
+        }
+
         if (GUILayout.Button("Remove", GUILayout.Width(80)))
         {
-            jsonData.dependencies.RemoveAt(i);
+            // Remove the dictionary entry based on the key
+            jsonData.dependencies.Remove(dependenciesKeys[i]);
+            break; // Exit the loop after removal
         }
         EditorGUILayout.EndHorizontal();
-    }
 
-    if (GUILayout.Button("Add Dependency", GUILayout.Width(150)))
-    {
-        jsonData.dependencies.Add(new PackageDependency());
-    }
-
-    GUILayout.Space(20); // Add vertical space between sections*/
-
+    }*/
     
-    GUILayout.Label("Dependencies", EditorStyles.boldLabel);
-    foreach (var dependency in jsonData.dependencies)
+    for (int i = 0; i < jsonData.dependencies.Count; i++)
     {
         EditorGUILayout.BeginHorizontal();
         GUILayout.Space(20); // Add left padding
 
+        var dependency = jsonData.dependencies.ElementAt(i);
         string dependencyName = EditorGUILayout.TextField("Name:", dependency.Key);
         string dependencyVersion = EditorGUILayout.TextField("Version:", dependency.Value);
-
+    
         // Update the dictionary entry if the name has changed
         if (dependencyName != dependency.Key)
         {
             jsonData.dependencies.Remove(dependency.Key);
             jsonData.dependencies[dependencyName] = dependencyVersion;
+        }else if( dependencyVersion != dependency.Value)
+        {
+            jsonData.dependencies[dependencyName] = dependencyVersion;
         }
-
+        
         if (GUILayout.Button("Remove", GUILayout.Width(80)))
         {
             // Remove the dictionary entry based on the key
@@ -164,19 +157,19 @@ private void OnGUI()
             break; // Exit the loop after removal
         }
         EditorGUILayout.EndHorizontal();
+       
     }
-
     if (GUILayout.Button("Add Dependency", GUILayout.Width(150)))
     {
         // Add a new empty entry to the dictionary
-        jsonData.dependencies.Add("NewPackageName", "NewVersion");
+        string uniqueID =  DateTime.Now.Ticks.ToString();//Guid.NewGuid();
+        jsonData.dependencies.Add($"Package Name {uniqueID}", "Version");
     }
 
-    GUILayout.Space(20); // Add vertical space between sections
+    #endregion
+    
+    #region Keywords
 
-    
-    
-    
     GUILayout.Label("Keywords", EditorStyles.boldLabel);
     for (int i = 0; i < jsonData.keywords.Count; i++)
     {
@@ -196,6 +189,8 @@ private void OnGUI()
     }
 
     GUILayout.Space(20); // Add vertical space between sections
+
+    #endregion
 
     GUILayout.Label("Author Information", EditorStyles.boldLabel);
     

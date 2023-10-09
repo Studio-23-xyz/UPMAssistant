@@ -49,14 +49,29 @@ namespace Studio23.SS2.UPMAssistant.Editor
            
            
         }
-        public void LoadExistenceValue()
+       
+
+        private void OnEnable()
+        {
+            Refresh();
+        }
+
+        private void Refresh()
+        {
+            AssetDatabase.Refresh();
+            LoadPackageName();
+            LoadExistenceValue();
+        }
+        private void LoadExistenceValue()
         {
             // Initialize the dictionary with file/folder existence check
             foreach (var entry in FolderAndFilesList.ToList())
             {
+                Debug.Log(Root + packageName + "/" + entry.Key);
                 if (entry.Key.Contains("."))
                 {
                     // For files, check if the file exists
+                   
                     FolderAndFilesList[entry.Key] = File.Exists(Root + packageName + "/" + entry.Key);
                 }
                 else
@@ -66,24 +81,20 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 }
             }
         }
-
-        private void OnEnable()
+        private void LoadPackageName()
         {
-           
-           LoadExistenceValue();
-        }
-
-        
-        private void OnGUI()
-        {
-            GUILayout.Label("Enter Package Name:", EditorStyles.boldLabel);
-            GUILayout.Label("Assets/Packages/", EditorStyles.boldLabel);
-
             // Use custom colors for the GUI elements
             if (string.IsNullOrEmpty(packageName))
             {
                 packageName = PlayerPrefs.GetString("packageName","com.[companyname].[project].[packagename]");
             }
+        }
+        private void OnGUI()
+        {
+            GUILayout.Label("Enter Package Name:", EditorStyles.boldLabel);
+            GUILayout.Label("Assets/Packages/", EditorStyles.boldLabel);
+
+            LoadPackageName();
             packageName = EditorGUILayout.TextField("Package Name", packageName, GUILayout.Width(position.width - 20));
 
             EditorGUILayout.BeginHorizontal();
@@ -103,23 +114,40 @@ namespace Studio23.SS2.UPMAssistant.Editor
             }
             EditorGUILayout.EndHorizontal();
 
+            bool _isCreateAsseblyDefinition_Editor = false;
             foreach (var entry in FolderAndFilesList.ToList())
             {
                
-                FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entry.Key, entry.Value, GUILayout.Width(position.width - 20));
-
-               
                 string extension = entry.Key.Split(".").LastOrDefault();
-                if (entry.Key.Contains(".") && extension == "asmdef")
+
+                if (extension == "asmdef")
                 {
-                    EditorGUILayout.BeginHorizontal();
-                    if (GUILayout.Button("Configure"))
+                    if (_isCreateAsseblyDefinition_Editor)
                     {
-                        PackageJsonController.CreateWizard();
+                        
+                        var entryKey = $"{entry.Key.Replace("[[packagename]]", $"{packageName}")}";
+                        FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entryKey, entry.Value,
+                            GUILayout.Width(position.width - 20));
                     }
-                    EditorGUILayout.EndHorizontal();
                 }
-                    
+                else  FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entry.Key, entry.Value);
+                
+                
+                if (entry.Key == PACKAGE_JSON)
+                {
+                    if (entry.Value)
+                    { 
+                       var isThisFileAlreadyCreated = File.Exists(Root + packageName + "/" + entry.Key);
+                       
+                       if(isThisFileAlreadyCreated)
+                        if (GUILayout.Button("Configure"))
+                        {
+                            PackageJsonController.CreateWizard();
+                        }
+                    }
+                      
+                } 
+                else  if (entry.Key == "Editor") _isCreateAsseblyDefinition_Editor = entry.Value; 
                     
             }
 
@@ -176,7 +204,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
                }
            }
 
-           
+           Refresh();
            ShowNotification($"Folder structure created successfully.");
        }
 
@@ -237,8 +265,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
            // Write the content to the file
            File.WriteAllText(filePath, assemblyDefinitionContent);
 
-           // Refresh the AssetDatabase to let Unity know about the new file
-           AssetDatabase.Refresh();
+           
 
            Debug.Log("Assembly Definition file created at: " + path);
        }
