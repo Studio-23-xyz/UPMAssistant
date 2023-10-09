@@ -2,8 +2,8 @@
 
 The UPM Assistant is an editor extension tool designed to simplify the process of creating folder structures required for Unity packages that are published on https://openupm.com/. This tool automates the generation of the necessary directory hierarchy, ensuring that package assets are organized correctly and adhere to the standards of Unity's package management system. This tool also allows users to generate and customize package.json files, facilitating seamless publishing on the platforms
 
-![UPM Assistant System Generator](Screenshoot/UPMAssistant%20System%20Generator.png)
-![package.json Editor](Screenshoot/UPMAssistant%20package.json%20Editor.png)
+
+
 ## Table of Contents
 
 1. [Installation](#installation)
@@ -24,6 +24,7 @@ https://github.com/Studio-23-xyz/UPMAssistant.git#upm
 ## Usage
 
 ### Automated Folder Structure Creation
+![UPM Assistant System Generator](Screenshoot/UPMAssistant%20System%20Generator.png)
 
 This tool automatically generates the necessary directories, including 'Editor', 'Runtime', 'Tests', and other essential folders, ensuring the package structure aligns with Unity's guidelines.
 
@@ -37,6 +38,7 @@ To create the automated folder structure, navigate to UPM -> UPM System Generato
 * **Refresh** : You can refresh any existence path using refresh button from the system generator.
 
 ### Customizing package.json
+![package.json Editor](Screenshoot/UPMAssistant%20package.json%20Editor.png)
 
 This Package Creator allows users to customize the package.json file, including essential details such as package name, version, description, and dependencies. This customization ensures that packages are accurately represented and easily understandable.
 
