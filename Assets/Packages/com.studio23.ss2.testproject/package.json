@@ -1,5 +1,5 @@
 {
-  "name": "com.studio23.ss2.upmassistant",
+  "name": "com.studio23.ss2.testproject",
   "version": "1.0.2",
   "displayName": "UPM Assistant",
   "description": "The UPM Assistant is an editor extension tool designed to simplify the process of creating folder structures required for Unity packages that are published on  openupm.com. This tool automates the generation of the necessary directory hierarchy, ensuring that package assets are organized correctly and adhere to the standards of Unity's package management system.",
@@ -7,15 +7,16 @@
   "unityRelease": "9f1",
   "documentationUrl": "https://openupm.com/packages/com.studio23.ss2.upmassistant",
   "changelogUrl": "https://openupm.com/packages/com.studio23.ss2.upmassistant",
-  "licensesUrl": "https://api.github.com/licenses/mit",
-  "scopedRegistries":  [
+  "licensesUrl": "https://api.github.com/licenses/agpl-3.0",
+  "scopedRegistries": [
     {
       "name": "Studio 23",
       "url": "https://package.openupm.com",
       "scopes": [
         "com.studio23.ss2"
       ]
-    }],
+    }
+  ],
   "dependencies": {
     "com.unity.nuget.newtonsoft-json": "3.2.1"
   },

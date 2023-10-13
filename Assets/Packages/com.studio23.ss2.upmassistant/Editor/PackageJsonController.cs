@@ -10,11 +10,12 @@ using UnityEngine.Serialization;
 
 namespace Studio23.SS2.UPMAssistant.Editor
 {
-    public class PackageJsonController : EditorWindow
+    public class PackageJsonController : GitHubLicenseHandler
     {
-        private PackageJsonData jsonData;
-
-        private string filePath;
+        private PackageJsonData jsonData; 
+        
+        private string jsonFilePath;
+       private string licenseFilePath;
 
         // warning message
         private string warningMessage = ""; // Warning message to display
@@ -32,12 +33,15 @@ namespace Studio23.SS2.UPMAssistant.Editor
         private void OnEnable()
         {
             LoadPreDefineValue();
+            FetchLicenses();
+            SelectedLicenceURL = jsonData.licensesUrl;
         }
 
         private void LoadPreDefineValue()
         {
             jsonData = new PackageJsonData();
-            filePath = Path.Combine(UPMAssistantManager.Root + UPMAssistantManager.packageName, UPMAssistantManager.PACKAGE_JSON);
+            jsonFilePath = Path.Combine(UPMAssistantManager.Root + UPMAssistantManager.packageName, UPMAssistantManager.PACKAGE_JSON);
+            licenseFilePath = Path.Combine(UPMAssistantManager.Root + UPMAssistantManager.packageName, UPMAssistantManager.LICENSE_MD);
             LoadData();
         }
     
@@ -49,7 +53,7 @@ private void OnGUI()
     GUILayout.Space(10); // Add top margin
 
     EditorGUI.BeginDisabledGroup(true); // Begin disabled group
-    EditorGUILayout.TextField("URL:", filePath);
+    EditorGUILayout.TextField("URL:", jsonFilePath);
     jsonData.name = EditorGUILayout.TextField("Name:", jsonData.name);
     
     
@@ -79,8 +83,31 @@ private void OnGUI()
     
     jsonData.documentationUrl = EditorGUILayout.TextField("Documentation URL:", jsonData.documentationUrl);
     jsonData.changelogUrl = EditorGUILayout.TextField("Changelog URL:", jsonData.changelogUrl);
-    jsonData.licensesUrl = EditorGUILayout.TextField("Licenses URL:", jsonData.licensesUrl);
 
+    #region Licenses
+
+        if (gitHubLicense != null && gitHubLicense.Count > 0)
+        {
+            List<string> licenseNames = new List<string>();
+            foreach (var license in gitHubLicense)  licenseNames.Add(license.name);
+
+            SelectedLicenceIndex = EditorGUILayout.Popup("Select License", SelectedLicenceIndex, licenseNames.ToArray());
+        }
+        else
+        {
+            GUILayout.Label("Online licenses are not found! Loading...");
+             
+        }
+    
+    EditorGUI.BeginDisabledGroup(true);
+   
+        var selectedLicenceURL =  gitHubLicense != null ? gitHubLicense[SelectedLicenceIndex].url : DefaultLicenceURL;
+        jsonData.licensesUrl =  EditorGUILayout.TextField("-", selectedLicenceURL);
+           //EditorGUILayout.TextField("Licenses URL:", jsonData.licensesUrl);
+    EditorGUI.EndDisabledGroup();
+    
+    
+    #endregion
 
     GUILayout.Space(20); // Add vertical space between sections
     GUILayout.Label("Scoped Registries", EditorStyles.boldLabel);
@@ -100,36 +127,7 @@ private void OnGUI()
     #region Dependencies
     GUILayout.Label("Dependencies", EditorStyles.boldLabel);
     
-    /*var dependenciesKeys = jsonData.dependencies.Keys.ToList();
-    var dependenciesValues = jsonData.dependencies.Values.ToList();
-
-    for (int i = 0; i < jsonData.dependencies.Count; i++)
-    {
-        EditorGUILayout.BeginHorizontal();
-        GUILayout.Space(20); // Add left padding
-
-        string dependencyName = EditorGUILayout.TextField("Name:", dependenciesKeys[i]);
-        string dependencyVersion = EditorGUILayout.TextField("Version:", dependenciesValues[i]);
-
-        // Update the dictionary entry if the name has changed
-        if (dependencyName != dependenciesKeys[i])
-        {
-            jsonData.dependencies.Remove(dependenciesKeys[i]);
-            jsonData.dependencies[dependencyName] = dependencyVersion;
-        }else if( dependencyVersion != dependenciesValues[i])
-        {
-            jsonData.dependencies[dependencyName] = dependencyVersion;
-        }
-
-        if (GUILayout.Button("Remove", GUILayout.Width(80)))
-        {
-            // Remove the dictionary entry based on the key
-            jsonData.dependencies.Remove(dependenciesKeys[i]);
-            break; // Exit the loop after removal
-        }
-        EditorGUILayout.EndHorizontal();
-
-    }*/
+    
     
     for (int i = 0; i < jsonData.dependencies.Count; i++)
     {
@@ -235,31 +233,46 @@ private void OnGUI()
         
         public void SetData(string jsonString)
         {
-            if (UPMAssistantManager.FolderAndFilesList.ContainsKey(UPMAssistantManager.PACKAGE_JSON))
+         
+            if (File.Exists(jsonFilePath))
             {
-                if (File.Exists(filePath))
-                {
-                    File.WriteAllText(filePath, jsonString);
-                    ShowNotification($"File created with data: " + filePath);
-                }
-                else
-                {
-                    // show warning
-                    ShowNotification($"Create {UPMAssistantManager.PACKAGE_JSON} using UPM System Generator", MessageType.Error);
-                    UPMAssistantManager.ShowWindow();
-                }
+                File.WriteAllText(jsonFilePath, jsonString);
+                ShowNotification($"File created with data: " + jsonFilePath);
+            }
+            else
+            {
+                // show warning
+                ShowNotification($"Create {UPMAssistantManager.PACKAGE_JSON} using UPM System Generator", MessageType.Error);
+                UPMAssistantManager.ShowWindow();
+            }
+                
+            if (File.Exists(licenseFilePath))
+            {
+                SaveLicense(licenseFilePath);
+                ShowNotification($"File created with data: " + licenseFilePath);
+            }
+            else
+            {
+                // show warning
+                ShowNotification($"Create {UPMAssistantManager.LICENSE_MD} using UPM System Generator", MessageType.Error);
+                UPMAssistantManager.ShowWindow();
+            }
+            
+            /*if (UPMAssistantManager.FolderAndFilesList.ContainsKey(UPMAssistantManager.PACKAGE_JSON))
+            {
+               
             }
             else
             {
                 ShowNotification($"File {UPMAssistantManager.PACKAGE_JSON} not found. Create {UPMAssistantManager.PACKAGE_JSON} using UPM Generator.", MessageType.Warning);
-            }
+            }*/
         }
      
         private void LoadData()
         {
-            if (File.Exists(filePath))
+            if (File.Exists(jsonFilePath))
             {
-                string jsonString = File.ReadAllText(filePath);
+                string jsonString = File.ReadAllText(jsonFilePath);
                 
                 if (string.IsNullOrWhiteSpace(jsonString))
                 {
@@ -288,7 +301,7 @@ private void OnGUI()
             jsonData.unityRelease = unityVersion[2]; //"9f1";
             jsonData.documentationUrl = "https://openupm.com/packages/com.studio23.ss2.upmassistant";
             jsonData.changelogUrl = "https://openupm.com/packages/com.studio23.ss2.upmassistant";
-            jsonData.licensesUrl = "https://opensource.org/license/mit/";
+            jsonData.licensesUrl = "https://api.github.com/licenses/mit";
 
             ScopedRegistry scopedRegistry = new ScopedRegistry()
             {

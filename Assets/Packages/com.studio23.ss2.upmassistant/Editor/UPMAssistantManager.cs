@@ -18,6 +18,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
        
 
        public static readonly string PACKAGE_JSON = "package.json";
+       public static readonly string LICENSE_MD = "LICENSE.md";
         // warning message
         private string warningMessage = ""; // Warning message to display
         private float warningDuration = 3f; // Duration to display the warning in seconds
@@ -90,6 +91,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
             {
                 packageName = PlayerPrefs.GetString("packageName","com.[companyname].[project].[packagename]");
             }
+            
         }
         private void DeleteFolder(string folderPath)
         {
@@ -233,6 +235,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 }
                 
                 PlayerPrefs.SetString("packageName", packageName);
+                PlayerPrefs.Save();
                 
                 CreateFolderStructure(packageName);
             }
