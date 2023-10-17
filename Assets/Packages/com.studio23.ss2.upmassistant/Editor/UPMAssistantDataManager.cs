@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using Codice.Client.BaseCommands.Import;
 
 public class UPMAssistantDataManager
 {
@@ -38,12 +39,14 @@ public class UPMAssistantDataManager
         var packageNamePath = Path.Combine(DATA_PATH, PACKAGE_NAME);
         if (!File.Exists(packageNamePath))
         {
-            DefaultPackageName.Replace("[companyname]", PlayerSettings.companyName);
-            DefaultPackageName.Replace("[project]", PlayerSettings.productName);
-            DefaultPackageName.Replace("[packagename]", PlayerSettings.productName);
-            PackageNameData data = new PackageNameData { PackageName = DefaultPackageName.ToLower() };
+            string updatedPackageName = DefaultPackageName;
+            updatedPackageName = updatedPackageName.Replace("[companyname]", PlayerSettings.companyName);
+            updatedPackageName = updatedPackageName.Replace("[project]", Application.productName);
+            updatedPackageName = updatedPackageName.Replace("[packagename]", PlayerSettings.productName);
+            updatedPackageName = updatedPackageName.Replace(" ", "").ToLower();
+            PackageNameData data = new PackageNameData { PackageName = updatedPackageName };
             string jsonData = JsonUtility.ToJson(data);
-            File.WriteAllText(packageNamePath, String.Empty);
+            File.WriteAllText(packageNamePath, jsonData);
         }
     }
     public static void SaveLicenseURLData(string licenseURL)
@@ -95,6 +98,37 @@ public class UPMAssistantDataManager
         {
             Debug.LogError("Package name data file not found!");
             return null;
+        }
+    }
+
+    public static void DeletedSaveData()
+    {
+        try
+        {
+            // Delete the entire data directory and its contents
+            if (Directory.Exists(ROOT))
+            {
+                Directory.Delete(ROOT, true);
+                Debug.Log("All initialized folder & files are deleted successfully.");
+            }else
+            {
+                Debug.LogWarning("Nothing found! No folder & files are deleted.");
+            }
+            
+            if (Directory.Exists(DATA_PATH))
+            {
+                Directory.Delete(DATA_PATH, true);
+                Debug.Log("All initialized save data deleted successfully.");
+            }
+            else
+            {
+                Debug.LogWarning("Data directory not found. No data to delete.");
+            }
+            
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("Error deleting initialized data: " + ex.Message);
         }
     }
 

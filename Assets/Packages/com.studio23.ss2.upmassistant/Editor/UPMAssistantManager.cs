@@ -54,18 +54,23 @@ namespace Studio23.SS2.UPMAssistant.Editor
 
         private void OnEnable()
         {
-            UPMAssistantDataManager.Initialized();
+           
             Refresh();
         }
 
         private void Refresh()
         {
-            
-            
+            UPMAssistantDataManager.Initialized();
             AssetDatabase.Refresh();
             LoadPackageName();
             LoadExistenceValue();
             FetchLicenses();
+        }
+         private void LoadPackageName()
+        {
+           //  if (string.IsNullOrEmpty(packageName))
+                packageName = UPMAssistantDataManager.LoadPackageNameData(); 
+            // "com.[companyname].[project].[packagename]";
         }
         private void LoadExistenceValue()
         {
@@ -86,15 +91,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 }
             }
         }
-        private void LoadPackageName()
-        {
-            // Use custom colors for the GUI elements
-            if (string.IsNullOrEmpty(packageName))
-            {
-                packageName = PlayerPrefs.GetString("packageName","com.[companyname].[project].[packagename]");
-            }
-            
-        }
+       
         private void DeleteFolder(string folderPath)
         {
             // Check if the folder exists
@@ -149,7 +146,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
             }
             if (GUILayout.Button("Delete System", GUILayout.Width(position.width / 4 - 5)))
             {
-                if (PlayerPrefs.HasKey("packageName"))
+              
+                if (UPMAssistantDataManager.LoadPackageNameData() != null)
                 {
                     bool userConfirmed = EditorUtility.DisplayDialog("Delete Folder",
                         "Are you sure you want to delete the folder and its contents?",
@@ -157,8 +155,9 @@ namespace Studio23.SS2.UPMAssistant.Editor
 
                     if (userConfirmed)
                     {
-                        DeleteFolder(Root+packageName);
-                        PlayerPrefs.DeleteKey("packageName");
+                        //DeleteFolder(Root + packageName);
+                        //PlayerPrefs.DeleteKey("packageName");
+                        UPMAssistantDataManager.DeletedSaveData();
                         Refresh();
                         ShowNotification("Folder deleted successfully.");
                     }
@@ -279,9 +278,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
                     ShowNotification("Please enter a package name", MessageType.Error);
                     return;
                 }
-                
-                PlayerPrefs.SetString("packageName", packageName);
-                PlayerPrefs.Save();
+                UPMAssistantDataManager.SavePackageNameData(packageName);
+                 
                 
                 CreateFolderStructure(packageName);
             }
