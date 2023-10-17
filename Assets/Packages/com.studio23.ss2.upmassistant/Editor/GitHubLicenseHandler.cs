@@ -22,7 +22,7 @@ public class GitHubLicenseHandler : EditorWindow
     public License license;
     public int SelectedLicenceIndex;
     public const string DefaultLicenceURL = "https://api.github.com/licenses/mit";//"https://api.github.com/licenses/lgpl-2.1";
-    public string SelectedLicenceURL = "https://api.github.com/licenses/mit";
+    public string SelectedLicenceURL = "https://api.github.com/licenses/mit"; // "https://api.github.com/licenses/lgpl-2.1";
 
     [MenuItem("Studio-23/GitHub Licenses")]
     public static void ShowWindow()
@@ -33,6 +33,7 @@ public class GitHubLicenseHandler : EditorWindow
     private void OnEnable()
     {
         FetchLicenses();
+        SelectedLicenceURL = UPMAssistantDataManager.LoadLicenseURLData();
     }
 
     public void FetchLicenses()

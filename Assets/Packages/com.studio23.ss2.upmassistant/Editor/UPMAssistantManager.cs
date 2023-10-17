@@ -9,16 +9,16 @@ using UnityEngine;
 
 namespace Studio23.SS2.UPMAssistant.Editor
 {
-    public class UPMAssistantManager: EditorWindow
+    public class UPMAssistantManager: GitHubLicenseHandler
     {
         
+        
         public static string Root = "Assets/Packages/";
+       
         public static string packageName;
         
-       
-
-       public static readonly string PACKAGE_JSON = "package.json";
-       public static readonly string LICENSE_MD = "LICENSE.md";
+        public static readonly string PACKAGE_JSON = "package.json";
+        public static readonly string LICENSE_MD = "LICENSE.md";
         // warning message
         private string warningMessage = ""; // Warning message to display
         private float warningDuration = 3f; // Duration to display the warning in seconds
@@ -49,21 +49,23 @@ namespace Studio23.SS2.UPMAssistant.Editor
         public static void ShowWindow()
         {
             GetWindow<UPMAssistantManager>("PackageJsonController Window");
-           
-           
         }
        
 
         private void OnEnable()
         {
+            UPMAssistantDataManager.Initialized();
             Refresh();
         }
 
         private void Refresh()
         {
+            
+            
             AssetDatabase.Refresh();
             LoadPackageName();
             LoadExistenceValue();
+            FetchLicenses();
         }
         private void LoadExistenceValue()
         {
@@ -123,7 +125,9 @@ namespace Studio23.SS2.UPMAssistant.Editor
         }
         private void OnGUI()
         {
-            
+
+            #region TopMenu
+
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Check All", GUILayout.Width(position.width / 4 - 5)))
             {
@@ -174,6 +178,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
             }
             EditorGUILayout.EndHorizontal();
             
+
+            #endregion
             
             GUILayout.Label("Enter Package Name:", EditorStyles.boldLabel);
            
@@ -213,6 +219,46 @@ namespace Studio23.SS2.UPMAssistant.Editor
                         {
                             PackageJsonController.CreateWizard();
                         }
+                    }
+                      
+                } 
+                else if (entry.Key == LICENSE_MD)
+                {
+                    if (entry.Value)
+                    { 
+                        var isThisFileAlreadyCreated = File.Exists(Root + packageName + "/" + entry.Key);
+
+                        if (isThisFileAlreadyCreated)
+                        {
+                            
+                            #region Licenses
+
+                            if (gitHubLicense != null && gitHubLicense.Count > 0)
+                            {
+                                List<string> licenseNames = new List<string>();
+                                foreach (var license in gitHubLicense)  licenseNames.Add(license.name);
+
+                                SelectedLicenceIndex = EditorGUILayout.Popup("Select License", SelectedLicenceIndex, licenseNames.ToArray());
+                            }
+                            else
+                            {
+                                GUILayout.Label("Online licenses are not found! Loading...");
+             
+                            }
+                            #endregion
+                            
+                            GUILayout.BeginHorizontal();
+                            if (GUILayout.Button("Configure"))
+                            {
+                                PackageJsonController.CreateWizard();
+                            }
+                            if(GUILayout.Button("Download"))
+                            {
+                                Application.OpenURL("https://choosealicense.com/");
+                            }
+                            GUILayout.EndHorizontal();
+                        }
+                           
                     }
                       
                 } 
