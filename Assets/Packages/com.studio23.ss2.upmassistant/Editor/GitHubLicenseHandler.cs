@@ -32,11 +32,11 @@ public class GitHubLicenseHandler : EditorWindow
 
     private void OnEnable()
     {
-        FetchLicenses();
-        SelectedLicenceURL = UPMAssistantDataManager.LoadLicenseURLData();
+        FetchOnlineGitLicenses();
+        SelectedLicenceURL = DataManager.LoadLicenseURLData();
     }
 
-    public void FetchLicenses()
+    public void FetchOnlineGitLicenses()
     {
         UnityWebRequest www = UnityWebRequest.Get(APIURL);
         www.SendWebRequest().completed += FetchLicensesCallback;

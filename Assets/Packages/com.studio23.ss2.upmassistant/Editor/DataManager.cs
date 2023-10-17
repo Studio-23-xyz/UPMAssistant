@@ -1,19 +1,46 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
 using Codice.Client.BaseCommands.Import;
 
-public class UPMAssistantDataManager
+namespace Studio23.SS2.UPMAssistant.Editor
 {
-    private static readonly string ROOT = "Assets/Packages/";
-    private static readonly string DATA_PATH = "Assets/UPMAssistant/Editor/Data";
-    private static readonly string LICENSE_URL = "licenseURLData.json";
-    private static readonly string PACKAGE_NAME = "packageNameData.json";
+    
+ 
+public static class DataManager
+{
+   public static readonly string ROOT = "Assets/Packages/";
+    public static readonly string DATA_PATH = "Assets/UPMAssistant/Editor/Data";
+    public static readonly string LICENSE_URL = "licenseURLData.json";
+    public static readonly string PACKAGE_NAME = "packageNameData.json";
    
     public const string DefaultPackageName = "com.[companyname].[project].[packagename]";
     public const string DefaultLicenceURL = "https://api.github.com/licenses/mit";//"https://api.github.com/licenses/lgpl-2.1";
     
+    public static readonly string PACKAGE_JSON = "package.json";
+    public static readonly string LICENSE_MD = "LICENSE.md";
+    
+    public static Dictionary<string, bool> FolderAndFilesList = new Dictionary<string, bool>
+    {
+        {DataManager.PACKAGE_JSON, false},
+        {"README.md", false},
+        {"CHANGELOG.md", false},
+        {DataManager.LICENSE_MD, false},
+        {"ThirdPartyNotices.md", false},
+        {"Editor", false},
+        {$"Editor/[[packagename]].editor.asmdef", false},
+        {"Runtime", false},
+        {"Tests", false},
+        {"Tests/EditMode", false},
+        {$"Tests/EditMode/editmode.tests.asmdef", false},
+        {"Tests/PlayMode", false},
+        {$"Tests/PlayMode/playmode.tests.asmdef", false},
+        {"Samples", false},
+        {"Documentation", false},
+           
+    };
     public static void Initialized()
     {
         if (!Directory.Exists(ROOT))
@@ -132,5 +159,79 @@ public class UPMAssistantDataManager
         }
     }
 
+     public static string GetAssemblyDefinitionContent(string fileName)
+       {
+           string assemblyDefinitionContent = "";
+
+           if (fileName.Contains(".editor"))
+           {
+               assemblyDefinitionContent = 
+                   "{\n" +
+                   $"  \"name\": \"{LoadPackageNameData()}.editor\",\n" +
+                   "  \"references\": [],\n" +
+                   "  \"optionalUnityReferences\": [],\n" +
+                   "  \"includePlatforms\": [\"Editor\"],\n" +
+                   "  \"excludePlatforms\": [],\n" +
+                   "  \"allowUnsafeCode\": false,\n" +
+                   "  \"overrideReferences\": false,\n" +
+                   "  \"precompiledReferences\": [],\n" +
+                   "  \"autoReferenced\": true,\n" +
+                   "  \"defineConstraints\": []\n" +
+                   "}";
+           }else if (fileName.Contains(".tests"))
+           {
+               if (fileName.Contains("editmode"))
+               {
+                    assemblyDefinitionContent =
+                       "{\n" +
+                       $"  \"name\": \"editmode.tests\",\n" +
+                       "  \"allowUnsafeCode\": false,\n" +
+                       "  \"autoReferenced\": false,\n" +
+                       "  \"overrideReferences\": true,\n" +
+                       "  \"references\": [\n" +
+                       "    \"UnityEngine.TestRunner\",\n" +
+                       "    \"UnityEditor.TestRunner\"\n" +
+                       "  ],\n" +
+                       "  \"optionalUnityReferences\": [],\n" +
+                       "  \"includePlatforms\": [\"Editor\"],\n" +
+                       "  \"excludePlatforms\": [],\n" +
+                       "  \"precompiledReferences\": [\n" +
+                       "    \"nunit.framework.dll\"\n" + 
+                       "  ],\n" +
+                       "  \"defineConstraints\": [\n" +
+                       "    \"UNITY_INCLUDE_TESTS\"\n" +
+                       "  ]\n" +
+                       "}";
+               }
+               else if (fileName.Contains("playmode"))
+               {
+                   assemblyDefinitionContent =
+                       "{\n" +
+                       $"  \"name\": \"playmode.tests\",\n" +
+                       "  \"allowUnsafeCode\": false,\n" +
+                       "  \"autoReferenced\": false,\n" +
+                       "  \"overrideReferences\": true,\n" +
+                       "  \"references\": [\n" +
+                       "    \"UnityEngine.TestRunner\",\n" +
+                       "    \"UnityEditor.TestRunner\"\n" +
+                       "  ],\n" +
+                       "  \"optionalUnityReferences\": [],\n" +
+                       "  \"includePlatforms\": [],\n" +
+                       "  \"excludePlatforms\": [],\n" +
+                       "  \"precompiledReferences\": [\n" +
+                       "    \"nunit.framework.dll\"\n" + 
+                       "  ],\n" +
+                       "  \"defineConstraints\": [\n" +
+                       "    \"UNITY_INCLUDE_TESTS\"\n" +
+                       "  ]\n" +
+                       "}";
+               }
+               
+           }
+           
+           
+           return assemblyDefinitionContent;
+       }
    
+}
 }

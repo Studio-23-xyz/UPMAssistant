@@ -33,22 +33,22 @@ namespace Studio23.SS2.UPMAssistant.Editor
         private void OnEnable()
         {
             LoadPreDefineValue();
-            FetchLicenses();
+            FetchOnlineGitLicenses();
             SelectedLicenceURL = jsonData.licensesUrl;
         }
 
         private void LoadPreDefineValue()
         {
             jsonData = new PackageJsonData();
-            jsonFilePath = Path.Combine(UPMAssistantManager.Root + UPMAssistantManager.packageName, UPMAssistantManager.PACKAGE_JSON);
-            licenseFilePath = Path.Combine(UPMAssistantManager.Root + UPMAssistantManager.packageName, UPMAssistantManager.LICENSE_MD);
+            jsonFilePath = Path.Combine(DataManager.ROOT + DataManager.LoadPackageNameData(), DataManager.PACKAGE_JSON);
+            licenseFilePath = Path.Combine(DataManager.ROOT + DataManager.LoadPackageNameData(), DataManager.LICENSE_MD);
             LoadData();
         }
     
 private void OnGUI()
 {
    
-    GUILayout.Label($"{UPMAssistantManager.PACKAGE_JSON} Settings", EditorStyles.boldLabel);
+    GUILayout.Label($"{DataManager.PACKAGE_JSON} Settings", EditorStyles.boldLabel);
 
     GUILayout.Space(10); // Add top margin
 
@@ -242,7 +242,7 @@ private void OnGUI()
             else
             {
                 // show warning
-                ShowNotification($"Create {UPMAssistantManager.PACKAGE_JSON} using UPM System Generator", MessageType.Error);
+                ShowNotification($"Create {DataManager.PACKAGE_JSON} using UPM System Generator", MessageType.Error);
                 UPMAssistantManager.ShowWindow();
             }
                 
@@ -254,7 +254,7 @@ private void OnGUI()
             else
             {
                 // show warning
-                ShowNotification($"Create {UPMAssistantManager.LICENSE_MD} using UPM System Generator", MessageType.Error);
+                ShowNotification($"Create {DataManager.LICENSE_MD} using UPM System Generator", MessageType.Error);
                 UPMAssistantManager.ShowWindow();
             }
             
@@ -292,7 +292,7 @@ private void OnGUI()
         }
         private void AssignPreDefaultValues()
         {
-            jsonData.name = UPMAssistantManager.packageName;
+            jsonData.name = DataManager.LoadPackageNameData();
             jsonData.version = Application.version; // 1.0.1
             jsonData.displayName = Application.productName; // UPM Assistant
             jsonData.description = "The UPM Assistant is an editor extension tool designed to simplify the process of creating folder structures required for Unity packages that are published on  openupm.com. This tool automates the generation of the necessary directory hierarchy, ensuring that package assets are organized correctly and adhere to the standards of Unity's package management system.";

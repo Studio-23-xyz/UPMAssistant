@@ -13,113 +13,58 @@ namespace Studio23.SS2.UPMAssistant.Editor
     {
         
         
-        public static string Root = "Assets/Packages/";
-       
-        public static string packageName;
+       // private static string _root;
+        private static string _packageName;
         
-        public static readonly string PACKAGE_JSON = "package.json";
-        public static readonly string LICENSE_MD = "LICENSE.md";
         // warning message
-        private string warningMessage = ""; // Warning message to display
-        private float warningDuration = 3f; // Duration to display the warning in seconds
-        private float warningStartTime; // Time when the warning started
-        private MessageType messageType = MessageType.Info;
+        private string _warningMessage = ""; // Warning message to display
+        private const float WarningDuration = 3f; // Duration to display the warning in seconds
+        private float _warningStartTime; // Time when the warning started
+        private MessageType _messageType = MessageType.Info;
         
-        public static Dictionary<string, bool> FolderAndFilesList = new Dictionary<string, bool>
-        {
-            {PACKAGE_JSON, false},
-            {"README.md", false},
-            {"CHANGELOG.md", false},
-            {"LICENSE.md", false},
-            {"ThirdPartyNotices.md", false},
-            {"Editor", false},
-            {$"Editor/[[packagename]].editor.asmdef", false},
-            {"Runtime", false},
-            {"Tests", false},
-            {"Tests/EditMode", false},
-            {$"Tests/EditMode/editmode.tests.asmdef", false},
-            {"Tests/PlayMode", false},
-            {$"Tests/PlayMode/playmode.tests.asmdef", false},
-            {"Samples", false},
-            {"Documentation", false},
-           
-        };
-
         [MenuItem("Studio-23/UPM Assistant/Generator", priority = 0)]
         public static void ShowWindow()
         {
             GetWindow<UPMAssistantManager>("PackageJsonController Window");
         }
-       
-
         private void OnEnable()
         {
-           
             Refresh();
         }
 
         private void Refresh()
         {
-            UPMAssistantDataManager.Initialized();
             AssetDatabase.Refresh();
+            DataManager.Initialized();
             LoadPackageName();
-            LoadExistenceValue();
-            FetchLicenses();
+            LoadExistanceFileFolderStructure();
+            FetchOnlineGitLicenses();
         }
          private void LoadPackageName()
-        {
-           //  if (string.IsNullOrEmpty(packageName))
-                packageName = UPMAssistantDataManager.LoadPackageNameData(); 
-            // "com.[companyname].[project].[packagename]";
+         {
+            _packageName = "";
+            if (string.IsNullOrEmpty(_packageName)) _packageName = DataManager.LoadPackageNameData(); 
         }
-        private void LoadExistenceValue()
+        private void LoadExistanceFileFolderStructure()
         {
             // Initialize the dictionary with file/folder existence check
-            foreach (var entry in FolderAndFilesList.ToList())
+            foreach (var entry in DataManager.FolderAndFilesList.ToList())
             {
-                Debug.Log(Root + packageName + "/" + entry.Key);
+               // Debug.Log(_root + _packageName + "/" + entry.Key);
                 if (entry.Key.Contains("."))
                 {
                     // For files, check if the file exists
-                   
-                    FolderAndFilesList[entry.Key] = File.Exists(Root + packageName + "/" + entry.Key);
+                    DataManager.FolderAndFilesList[entry.Key] = File.Exists(DataManager.ROOT + _packageName + "/" + entry.Key);
                 }
                 else
                 {
                     // For folders, check if the folder exists
-                    FolderAndFilesList[entry.Key] = AssetDatabase.IsValidFolder(Root + packageName + "/" + entry.Key);
+                    DataManager.FolderAndFilesList[entry.Key] = AssetDatabase.IsValidFolder(DataManager.ROOT + _packageName + "/" + entry.Key);
                 }
             }
         }
        
-        private void DeleteFolder(string folderPath)
-        {
-            // Check if the folder exists
-            if (Directory.Exists(folderPath))
-            {
-                // Delete all files in the folder
-                string[] files = Directory.GetFiles(folderPath);
-                foreach (string file in files)
-                {
-                    File.Delete(file);
-                }
-
-                // Delete all subdirectories and their contents
-                string[] subdirectories = Directory.GetDirectories(folderPath);
-                foreach (string subdirectory in subdirectories)
-                {
-                    DeleteFolder(subdirectory);
-                }
-
-                // Finally, delete the main folder
-                Directory.Delete(folderPath);
-                Debug.Log("Folder deleted: " + folderPath);
-            }
-            else
-            {
-                Debug.LogWarning("Folder not found: " + folderPath);
-            }
-        }
+        
         private void OnGUI()
         {
 
@@ -128,16 +73,16 @@ namespace Studio23.SS2.UPMAssistant.Editor
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Check All", GUILayout.Width(position.width / 4 - 5)))
             {
-                foreach (var entry in FolderAndFilesList.ToList())
+                foreach (var entry in DataManager.FolderAndFilesList.ToList())
                 {
-                    FolderAndFilesList[entry.Key] = true;
+                    DataManager.FolderAndFilesList[entry.Key] = true;
                 }
             }
             if (GUILayout.Button("Uncheck All", GUILayout.Width(position.width / 4 - 5)))
             {
-                foreach (var entry in FolderAndFilesList.ToList())
+                foreach (var entry in DataManager.FolderAndFilesList.ToList())
                 {
-                    FolderAndFilesList[entry.Key] = false;
+                    DataManager.FolderAndFilesList[entry.Key] = false;
                 }
             }
             if (GUILayout.Button("Refresh", GUILayout.Width(position.width / 4 - 5)))
@@ -147,7 +92,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
             if (GUILayout.Button("Delete System", GUILayout.Width(position.width / 4 - 5)))
             {
               
-                if (UPMAssistantDataManager.LoadPackageNameData() != null)
+                if (DataManager.LoadPackageNameData() != null)
                 {
                     bool userConfirmed = EditorUtility.DisplayDialog("Delete Folder",
                         "Are you sure you want to delete the folder and its contents?",
@@ -157,7 +102,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
                     {
                         //DeleteFolder(Root + packageName);
                         //PlayerPrefs.DeleteKey("packageName");
-                        UPMAssistantDataManager.DeletedSaveData();
+                        DataManager.DeletedSaveData();
                         Refresh();
                         ShowNotification("Folder deleted successfully.");
                     }
@@ -183,13 +128,13 @@ namespace Studio23.SS2.UPMAssistant.Editor
             GUILayout.Label("Enter Package Name:", EditorStyles.boldLabel);
            
 
-            LoadPackageName();
-            packageName = EditorGUILayout.TextField("Assets/Packages/", packageName, GUILayout.Width(position.width - 20));
-
+             
+            _packageName = EditorGUILayout.TextField("Assets/Packages/", _packageName, GUILayout.Width(position.width - 20));
+            
          
 
             bool _isCreateAsseblyDefinition_Editor = false;
-            foreach (var entry in FolderAndFilesList.ToList())
+            foreach (var entry in DataManager.FolderAndFilesList.ToList())
             {
                
                 string extension = entry.Key.Split(".").LastOrDefault();
@@ -199,19 +144,19 @@ namespace Studio23.SS2.UPMAssistant.Editor
                     if (_isCreateAsseblyDefinition_Editor)
                     {
                         
-                        var entryKey = $"{entry.Key.Replace("[[packagename]]", $"{packageName}")}";
-                        FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entryKey, entry.Value,
+                        var entryKey = $"{entry.Key.Replace("[[packagename]]", $"{_packageName}")}";
+                        DataManager.FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entryKey, entry.Value,
                             GUILayout.Width(position.width - 20));
                     }
                 }
-                else  FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entry.Key, entry.Value);
+                else  DataManager.FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entry.Key, entry.Value);
                 
                 
-                if (entry.Key == PACKAGE_JSON)
+                if (entry.Key == DataManager.PACKAGE_JSON)
                 {
                     if (entry.Value)
                     { 
-                       var isThisFileAlreadyCreated = File.Exists(Root + packageName + "/" + entry.Key);
+                       var isThisFileAlreadyCreated = File.Exists(DataManager.ROOT + _packageName + "/" + entry.Key);
                        
                        if(isThisFileAlreadyCreated)
                         if (GUILayout.Button("Configure"))
@@ -221,11 +166,11 @@ namespace Studio23.SS2.UPMAssistant.Editor
                     }
                       
                 } 
-                else if (entry.Key == LICENSE_MD)
+                else if (entry.Key == DataManager.LICENSE_MD)
                 {
                     if (entry.Value)
                     { 
-                        var isThisFileAlreadyCreated = File.Exists(Root + packageName + "/" + entry.Key);
+                        var isThisFileAlreadyCreated = File.Exists(DataManager.ROOT + _packageName + "/" + entry.Key);
 
                         if (isThisFileAlreadyCreated)
                         {
@@ -265,23 +210,21 @@ namespace Studio23.SS2.UPMAssistant.Editor
                     
             }
 
-            if (!string.IsNullOrEmpty(warningMessage) && Time.realtimeSinceStartup - warningStartTime < warningDuration)
+            if (!string.IsNullOrEmpty(_warningMessage) && Time.realtimeSinceStartup - _warningStartTime < WarningDuration)
             {
-                EditorGUILayout.HelpBox(warningMessage, messageType);
+                EditorGUILayout.HelpBox(_warningMessage, _messageType);
             }
             
             GUI.backgroundColor = Color.green;
             if (GUILayout.Button("Generate UPM System", GUILayout.Height(40)))
             {
-                if (packageName == "")
+                if (_packageName == "")
                 {
                     ShowNotification("Please enter a package name", MessageType.Error);
                     return;
                 }
-                UPMAssistantDataManager.SavePackageNameData(packageName);
-                 
-                
-                CreateFolderStructure(packageName);
+                DataManager.SavePackageNameData(_packageName);
+                CreateFolderStructure();
             }
 
             GUI.backgroundColor = Color.white; // Reset the background color
@@ -290,35 +233,42 @@ namespace Studio23.SS2.UPMAssistant.Editor
        
         private void ShowNotification(string message, MessageType msgType = MessageType.Info)
         {
-            messageType = msgType;
-            warningMessage = message;
-            warningStartTime = Time.realtimeSinceStartup;
+            _messageType = msgType;
+            _warningMessage = message;
+            _warningStartTime = Time.realtimeSinceStartup;
         }
-       public void CreateFolderStructure(string folderName)
+       public void CreateFolderStructure()
        {
-           string rootPath = Root + folderName;
-
+           
+           var packageDirectory = DataManager.ROOT + DataManager.LoadPackageNameData();
+           if (!Directory.Exists(packageDirectory))
+           {
+               Directory.CreateDirectory(packageDirectory);
+               Debug.Log("Folder structure created: " + packageDirectory);
+           }
+           
+           /*string rootPath = _root + packageName;
            if (!AssetDatabase.IsValidFolder(rootPath))
            {
-               AssetDatabase.CreateFolder("Assets/Packages", folderName);
+               AssetDatabase.CreateFolder("Assets/Packages", packageName);
                Debug.Log("Root folder created: " + rootPath);
            }
            else
            {
                Debug.Log("Root folder already exists: " + rootPath);
-           }
+           }*/
 
-           foreach (var entry in FolderAndFilesList)
+           foreach (var entry in DataManager. FolderAndFilesList)
            {
                if (entry.Value)
                {
                    if (entry.Key.Contains("."))
                    {
-                       CreateFile(rootPath, entry.Key);
+                       CreateFile(packageDirectory, entry.Key);
                    }
                    else
                    {
-                       CreateFolder(rootPath + "/" + entry.Key);
+                       CreateFolder(packageDirectory + "/" + entry.Key);
                    }
                }
            }
@@ -327,27 +277,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
            ShowNotification($"Folder structure created successfully.");
        }
 
-       private void CreateFile(string path, string fileName)
-       {
-           
-           string extension = fileName.Split(".").LastOrDefault();
-           
-           string filePath = Path.Combine(path, fileName);
-           if (!File.Exists(filePath) && extension == "asmdef")
-           {
-
-               CreateEditorAssemblyDefinition( path,  fileName);
-           }
-           else if (!File.Exists(filePath))
-           {
-               File.WriteAllText(filePath, string.Empty);
-               Debug.Log("File created: " + filePath);
-           }
-           else
-           {
-               Debug.Log("File already exists: " + filePath);
-           }
-       }
+      
 
        private static void CreateFolder(string path)
        {
@@ -361,123 +291,63 @@ namespace Studio23.SS2.UPMAssistant.Editor
                Debug.Log("Folder already exists: " + path);
            }
        }
-
-       void CreateEditorAssemblyDefinition(string path, string fileName)
+       private void CreateFile(string path, string fileName)
        {
-           string filePath = Path.Combine(path,$"{fileName.Replace("[[packagename]]",$"{packageName}")}");
-
-           // Define the content of the assembly definition file
-           string assemblyDefinitionContent = GetAssemblyDefinitionContent(fileName);
            
+           string extension = fileName.Split(".").LastOrDefault();
+           
+           string filePath = Path.Combine(path, fileName);
+           if (!File.Exists(filePath) && extension == "asmdef")
+           {
+               CreateFileAsmdef( path,  fileName);
+           }
+           else if (!File.Exists(filePath))
+           {
+               File.WriteAllText(filePath, string.Empty);
+               Debug.Log("File created: " + filePath);
+           }
+           else
+           {
+               Debug.Log("File already exists: " + filePath);
+           }
+       }
+       void CreateFileAsmdef(string path, string fileName)
+       {
+           string filePath = Path.Combine(path,$"{fileName.Replace("[[packagename]]",$"{_packageName}")}");
+           // Define the content of the assembly definition file
+           string assemblyDefinitionContent = DataManager.GetAssemblyDefinitionContent(fileName);
            //if(string.IsNullOrEmpty(assemblyDefinitionContent)) 
                File.WriteAllText(filePath, assemblyDefinitionContent);
           
        }
-
-       private string GetAssemblyDefinitionContent(string fileName)
-       {
-           string assemblyDefinitionContent = "";
-
-           if (fileName.Contains(".editor"))
-           {
-               assemblyDefinitionContent = 
-                   "{\n" +
-                   $"  \"name\": \"{packageName}.editor\",\n" +
-                   "  \"references\": [],\n" +
-                   "  \"optionalUnityReferences\": [],\n" +
-                   "  \"includePlatforms\": [\"Editor\"],\n" +
-                   "  \"excludePlatforms\": [],\n" +
-                   "  \"allowUnsafeCode\": false,\n" +
-                   "  \"overrideReferences\": false,\n" +
-                   "  \"precompiledReferences\": [],\n" +
-                   "  \"autoReferenced\": true,\n" +
-                   "  \"defineConstraints\": []\n" +
-                   "}";
-           }else if (fileName.Contains(".tests"))
-           {
-               if (fileName.Contains("editmode"))
-               {
-                    assemblyDefinitionContent =
-                       "{\n" +
-                       $"  \"name\": \"editmode.tests\",\n" +
-                       "  \"allowUnsafeCode\": false,\n" +
-                       "  \"autoReferenced\": false,\n" +
-                       "  \"overrideReferences\": true,\n" +
-                       "  \"references\": [\n" +
-                       "    \"UnityEngine.TestRunner\",\n" +
-                       "    \"UnityEditor.TestRunner\"\n" +
-                       "  ],\n" +
-                       "  \"optionalUnityReferences\": [],\n" +
-                       "  \"includePlatforms\": [\"Editor\"],\n" +
-                       "  \"excludePlatforms\": [],\n" +
-                       "  \"precompiledReferences\": [\n" +
-                       "    \"nunit.framework.dll\"\n" + 
-                       "  ],\n" +
-                       "  \"defineConstraints\": [\n" +
-                       "    \"UNITY_INCLUDE_TESTS\"\n" +
-                       "  ]\n" +
-                       "}";
-               }
-               else if (fileName.Contains("playmode"))
-               {
-                   assemblyDefinitionContent =
-                       "{\n" +
-                       $"  \"name\": \"playmode.tests\",\n" +
-                       "  \"allowUnsafeCode\": false,\n" +
-                       "  \"autoReferenced\": false,\n" +
-                       "  \"overrideReferences\": true,\n" +
-                       "  \"references\": [\n" +
-                       "    \"UnityEngine.TestRunner\",\n" +
-                       "    \"UnityEditor.TestRunner\"\n" +
-                       "  ],\n" +
-                       "  \"optionalUnityReferences\": [],\n" +
-                       "  \"includePlatforms\": [],\n" +
-                       "  \"excludePlatforms\": [],\n" +
-                       "  \"precompiledReferences\": [\n" +
-                       "    \"nunit.framework.dll\"\n" + 
-                       "  ],\n" +
-                       "  \"defineConstraints\": [\n" +
-                       "    \"UNITY_INCLUDE_TESTS\"\n" +
-                       "  ]\n" +
-                       "}";
-               }
-               
-           }
-           
-           
-           return assemblyDefinitionContent;
-       }
-       /*public void SetData(Dictionary<string, string> fileData)
-       {
-           // Use the file data to populate the files while creating them
-           foreach (var entry in fileData)
-           {
-               if (FolderAndFilesList.ContainsKey(entry.Key) && FolderAndFilesList[entry.Key])
-               {
-                   
-                   string filePath = Path.Combine(Root + PackageName, entry.Key);
-                   if (!File.Exists(filePath))
-                   {
-                       // show warning
-                       Debug.LogError($"Create {entry.Key} using UPM Generator");
-                   }
-                   else
-                   {
-                       File.WriteAllText(filePath, entry.Value);
-                       // CreateFolderStructure(PackageName);
-                       ShowNotification($"File created with data: " + filePath);
-                   }
-               }
-               else
-               {
-                   ShowNotification($"File {entry.Key} not found. Create {entry.Key} using UPM Generator.", MessageType.Warning);
-               }
-               
-           }
-       } */
-
        
+       /*private void DeleteFolder(string folderPath)
+       {
+           // Check if the folder exists
+           if (Directory.Exists(folderPath))
+           {
+               // Delete all files in the folder
+               string[] files = Directory.GetFiles(folderPath);
+               foreach (string file in files)
+               {
+                   File.Delete(file);
+               }
 
-       
+               // Delete all subdirectories and their contents
+               string[] subdirectories = Directory.GetDirectories(folderPath);
+               foreach (string subdirectory in subdirectories)
+               {
+                   DeleteFolder(subdirectory);
+               }
+
+               // Finally, delete the main folder
+               Directory.Delete(folderPath);
+               Debug.Log("Folder deleted: " + folderPath);
+           }
+           else
+           {
+               Debug.LogWarning("Folder not found: " + folderPath);
+           }
+       }*/
     }
 }
