@@ -37,7 +37,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
             AssetDatabase.Refresh();
             DataManager.Initialized();
             LoadPackageName();
-            LoadExistanceFileFolderStructure();
+            LoadExistenceFileFolderStructure();
             FetchOnlineGitLicenses();
         }
          private void LoadPackageName()
@@ -45,7 +45,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
             _packageName = "";
             if (string.IsNullOrEmpty(_packageName)) _packageName = DataManager.LoadPackageNameData(); 
         }
-        private void LoadExistanceFileFolderStructure()
+        private void LoadExistenceFileFolderStructure()
         {
             // Initialize the dictionary with file/folder existence check
             foreach (var entry in DataManager.FolderAndFilesList.ToList())
@@ -87,6 +87,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
             }
             if (GUILayout.Button("Refresh", GUILayout.Width(position.width / 4 - 5)))
             {
+                if(_packageName != "") 
+                    DataManager.SavePackageNameData(_packageName);
                 Refresh();
             }
             if (GUILayout.Button("Delete System", GUILayout.Width(position.width / 4 - 5)))
