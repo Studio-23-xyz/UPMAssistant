@@ -1,40 +1,27 @@
-﻿
-using System.IO;
-using System.Threading.Tasks;
-
-
-namespace Studio23.SS2.UPMAssistant.Editor
-{
-using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.IO;
+using Studio23.SS2.UPMAssistant.Editor.Data;
+using UnityEditor;
 
-public static class GitHubLicenseHandler  
+
+namespace Studio23.SS2.UPMAssistant.Editor
+{ 
+    public static class GitHubLicenseAPIController  
 {
     
     private const string APIURL = "https://api.github.com/licenses";
-    public static List<GitHubLicense> gitHubLicense;
-    public static License license;
     public static int SelectedLicenceIndex;
-    public static string SelectedLicenceURL = "https://api.github.com/licenses/mit"; // "https://api.github.com/licenses/lgpl-2.1";
-   
-    /*[MenuItem("Studio-23/GitHub Licenses")]
-    public static void ShowWindow()
-    {
-        GetWindow<GitHubLicenseHandler>("GitHub Licenses");
-    }*/
-
-    /*private void OnEnable()
-    {
-        FetchOnlineGitLicenses();
-       
-    }*/
-
+    public static List<GitHubLicense> gitHubLicense;
+    public static bool IsDownloading = false;
+ 
+    private static string _selectedLicenceURL; 
+    
     public static void FetchOnlineGitLicenses()
     {
-        SelectedLicenceURL = DataManager.LoadLicenseURLData();
+        _selectedLicenceURL = DataManager.LoadLicenseURLData();
         UnityWebRequest www = UnityWebRequest.Get(APIURL);
         www.SendWebRequest().completed += FetchLicensesCallback;
     }
@@ -51,46 +38,18 @@ public static class GitHubLicenseHandler
         {
             string jsonResponse = www.downloadHandler.text;
             gitHubLicense = JsonConvert.DeserializeObject<List<GitHubLicense>>(jsonResponse);
-            SelectedLicenceIndex =  GetLicenseIndex(SelectedLicenceURL);
+            SelectedLicenceIndex =  GetLicenseIndex(_selectedLicenceURL);
            
         }
     }
     
    
-    /*private void OnGUI()
-    {
-        sharedContent.DrawGUIContent();
-        
-        if (gitHubLicense != null && gitHubLicense.Count > 0)
-        {
-            List<string> licenseNames = new List<string>();
-            foreach (var license in gitHubLicense)  licenseNames.Add(license.name);
-
-            SelectedLicenceIndex = EditorGUILayout.Popup("Select License", SelectedLicenceIndex, licenseNames.ToArray());
-
-            if (SelectedLicenceIndex >= 0 && SelectedLicenceIndex < gitHubLicense.Count)
-            {
-                GUILayout.Space(10);
-                var selectedLicenseObj = gitHubLicense[SelectedLicenceIndex];
-                GUILayout.Label($"URL: {selectedLicenseObj.url}");
-            }
-        }
-        else
-        {
-            GUILayout.Label("Loading licenses...");
-        }
-    }*/
-
-    
-    public static bool IsDownloading = false;
     public static void DownloadLicence()
     {
         IsDownloading = true;
         UnityWebRequest www = UnityWebRequest.Get(DataManager.LoadLicenseURLData());
             www.SendWebRequest().completed += FetchLicensesCallback2;
     }
-
-   
     private static void FetchLicensesCallback2(AsyncOperation operation)
     {
         UnityWebRequest www = ((UnityWebRequestAsyncOperation)operation).webRequest;
@@ -102,7 +61,7 @@ public static class GitHubLicenseHandler
         else
         {
             string jsonResponse = www.downloadHandler.text;
-            license = JsonConvert.DeserializeObject<License>(jsonResponse);
+            var license = JsonConvert.DeserializeObject<License>(jsonResponse);
             var licenseFilePath =
                 Path.Combine(DataManager.ROOT + DataManager.LoadPackageNameData(), DataManager.LICENSE_MD);
             if (!File.Exists(licenseFilePath))
@@ -112,7 +71,7 @@ public static class GitHubLicenseHandler
             }
             File.WriteAllText(licenseFilePath, string.Empty);
             File.WriteAllText(licenseFilePath, license.body);
-
+            AssetDatabase.Refresh();
         }
         IsDownloading = false;
     }
@@ -137,30 +96,9 @@ public static class GitHubLicenseHandler
     }
 }
 
-[System.Serializable]
-public class GitHubLicense
-{
-    public string key;
-    public string name;
-    public string url;
-}
 
-[System.Serializable]
-public class License
-{
-    public string key;
-    public string name;
-    public string spdx_id;
-    public string url;
-    public string node_id;
-    public string html_url;
-    public string description;
-    public string implementation;
-    public List<string> permissions;
-    public List<string> conditions;
-    public List<string> limitations;
-    public string body;
-    public bool featured;
-}
+
+
+
 
 }

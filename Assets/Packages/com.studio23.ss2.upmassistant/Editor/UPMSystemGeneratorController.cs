@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Studio23.SS2.UPMAssistant.Editor
 {
-    public class UPMAssistantManager: EditorWindow
+    public class UPMSystemGeneratorController: EditorWindow
     {
        
         // private static string _root;
@@ -25,7 +25,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
         [MenuItem("Studio-23/UPM Assistant/Generator", priority = 0)]
         public static void ShowWindow()
         {
-            UPMAssistantManager window =GetWindow<UPMAssistantManager>("PackageJsonController Window");
+            UPMSystemGeneratorController window =GetWindow<UPMSystemGeneratorController>("PackageJsonController Window");
+            window.minSize = new Vector2(600, 600); 
             window.titleContent = new GUIContent("UPM System Generator Window");
              
         }
@@ -44,7 +45,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
         }
         private static void RestartWindow()
         {
-            UPMAssistantManager window = GetWindow<UPMAssistantManager>();
+            UPMSystemGeneratorController window = GetWindow<UPMSystemGeneratorController>();
             if (window != null)
             {
                 window.Close();
@@ -69,7 +70,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 if (entry.Key.Contains("."))
                 {
                     // For files, check if the file exists
-                    DataManager.FolderAndFilesList[entry.Key] = File.Exists(DataManager.ROOT + _packageName + "/" + entry.Key);
+                    var entryKey = $"{entry.Key.Replace("[[packagename]]", $"{_packageName}")}";
+                    DataManager.FolderAndFilesList[entry.Key] = File.Exists(DataManager.ROOT + _packageName + "/" + entryKey);
                 }
                 else
                 {
@@ -150,7 +152,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
             
          
 
-            bool _isCreateAsseblyDefinition_Editor = false;
+            bool isShowNestedAssemblyDefOption = false;
             foreach (var entry in DataManager.FolderAndFilesList.ToList())
             {
                
@@ -158,15 +160,16 @@ namespace Studio23.SS2.UPMAssistant.Editor
 
                 if (extension == "asmdef")
                 {
-                    if (_isCreateAsseblyDefinition_Editor)
+                    if (isShowNestedAssemblyDefOption)
                     {
                         
                         var entryKey = $"{entry.Key.Replace("[[packagename]]", $"{_packageName}")}";
-                        DataManager.FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entryKey, entry.Value,
-                            GUILayout.Width(position.width - 20));
+                        DataManager.FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entryKey, entry.Value, GUILayout.Width(position.width - 20));
                     }
                 }
                 else  DataManager.FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entry.Key, entry.Value);
+                
+                
                 
                 
                 if (entry.Key == DataManager.PACKAGE_JSON)
@@ -174,12 +177,33 @@ namespace Studio23.SS2.UPMAssistant.Editor
                     if (entry.Value)
                     { 
                        var isThisFileAlreadyCreated = File.Exists(DataManager.ROOT + _packageName + "/" + entry.Key);
-                       
-                       if(isThisFileAlreadyCreated)
-                        if (GUILayout.Button("Configure"))
+
+                       if (isThisFileAlreadyCreated)
+                       {
+                           if (GUILayout.Button("Configure"))
+                           {
+                               PackageJsonController.CreateWizard();
+                           }
+                       }
+                        
+                    }
+                      
+                } 
+                else if (entry.Key == DataManager.README_MD || entry.Key == DataManager.CHANGELOG_MD || entry.Key == DataManager.THIRDPARTYNOTICES_MD)
+                {
+                    if (entry.Value)
+                    { 
+                        var fileExist =
+                            Path.Combine(DataManager.ROOT + DataManager.LoadPackageNameData(), entry.Key);
+
+                        if (File.Exists(fileExist))
                         {
-                            PackageJsonController.CreateWizard();
+                            if (GUILayout.Button("Configure"))
+                            {
+                                UPMFileEditorWindowController.ShowWindow(fileExist);
+                            }
                         }
+                           
                     }
                       
                 } 
@@ -194,37 +218,16 @@ namespace Studio23.SS2.UPMAssistant.Editor
                             
                             #region Licenses
                             SharedGUIContent.Instance.DrawGUIContent();
-                            /*if (gitHubLicense != null && gitHubLicense.Count > 0)
-                            {
-                                List<string> licenseNames = new List<string>();
-                                foreach (var license in gitHubLicense)  licenseNames.Add(license.name);
-
-                                SelectedLicenceIndex = EditorGUILayout.Popup("Select License", SelectedLicenceIndex, licenseNames.ToArray());
-                            }
-                            else
-                            {
-                                GUILayout.Label("Online licenses are not found! Loading...");
-             
-                            }
-                          
-                            
-                            GUILayout.BeginHorizontal();
-                            if (GUILayout.Button("Configure"))
-                            {
-                                PackageJsonController.CreateWizard();
-                            }
-                            if(GUILayout.Button("Download"))
-                            {
-                                Application.OpenURL("https://choosealicense.com/");
-                            }
-                            GUILayout.EndHorizontal();*/
                             #endregion
                         }
                            
                     }
                       
                 } 
-                else  if (entry.Key == "Editor") _isCreateAsseblyDefinition_Editor = entry.Value; 
+                else  if (entry.Key == "Editor") isShowNestedAssemblyDefOption = entry.Value; 
+                else  if (entry.Key == "Runtime") isShowNestedAssemblyDefOption = entry.Value; 
+                else  if (entry.Key == "Tests/EditMode") isShowNestedAssemblyDefOption = entry.Value; 
+                else  if (entry.Key == "Tests/PlayMode") isShowNestedAssemblyDefOption = entry.Value; 
                     
             }
 

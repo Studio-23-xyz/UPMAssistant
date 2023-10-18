@@ -2,7 +2,8 @@
 
 namespace Studio23.SS2.UPMAssistant.Editor
 {
-    public class PackageJsonData
+    
+    public class PackageJsonData 
     {
         public string name;
         public string version;
@@ -16,12 +17,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
         public List<ScopedRegistry> scopedRegistries = new List<ScopedRegistry>();
         public Dictionary<string, string> dependencies = new Dictionary<string, string>();
         public List<string> keywords = new List<string>();
-        
-       
-        /*public string authorName;
-        public string authorEmail;
-        public string authorUrl;*/
         public Author author = new Author();
+        
     }
 
     public class Author

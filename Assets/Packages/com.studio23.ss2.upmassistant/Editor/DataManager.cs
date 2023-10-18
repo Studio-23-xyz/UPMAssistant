@@ -20,18 +20,23 @@ public static class DataManager
     public const string DefaultLicenceURL = "https://api.github.com/licenses/mit";//"https://api.github.com/licenses/lgpl-2.1";
     
     public static readonly string PACKAGE_JSON = "package.json";
+    public static readonly string README_MD = "README.md";
+    public static readonly string CHANGELOG_MD = "CHANGELOG.md";
     public static readonly string LICENSE_MD = "LICENSE.md";
+    public static readonly string THIRDPARTYNOTICES_MD = "ThirdPartyNotices.md";
+     
     
     public static Dictionary<string, bool> FolderAndFilesList = new Dictionary<string, bool>
     {
-        {DataManager.PACKAGE_JSON, false},
-        {"README.md", false},
-        {"CHANGELOG.md", false},
-        {DataManager.LICENSE_MD, false},
-        {"ThirdPartyNotices.md", false},
+        {PACKAGE_JSON, false},
+        {README_MD, false},
+        {CHANGELOG_MD, false},
+        {LICENSE_MD, false},
+        {THIRDPARTYNOTICES_MD, false},
         {"Editor", false},
         {$"Editor/[[packagename]].editor.asmdef", false},
         {"Runtime", false},
+        {$"Runtime/[[packagename]].asmdef", false},
         {"Tests", false},
         {"Tests/EditMode", false},
         {$"Tests/EditMode/editmode.tests.asmdef", false},
@@ -218,6 +223,21 @@ public static class DataManager
                        "}";
                }
                
+           } else if (fileName.Contains("Runtime/"))
+           {
+               assemblyDefinitionContent = 
+                   "{\n" +
+                   $"  \"name\": \"{LoadPackageNameData()}\",\n" +
+                   "  \"references\": [],\n" +
+                   "  \"optionalUnityReferences\": [],\n" +
+                   "  \"includePlatforms\": [],\n" +
+                   "  \"excludePlatforms\": [],\n" +
+                   "  \"allowUnsafeCode\": false,\n" +
+                   "  \"overrideReferences\": false,\n" +
+                   "  \"precompiledReferences\": [],\n" +
+                   "  \"autoReferenced\": true,\n" +
+                   "  \"defineConstraints\": []\n" +
+                   "}";
            }
            
            
