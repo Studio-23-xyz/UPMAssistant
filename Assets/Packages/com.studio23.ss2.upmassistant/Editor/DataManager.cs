@@ -130,32 +130,23 @@ public static class DataManager
 
     public static void DeletedSaveData()
     {
-        try
+        var packageNamePath = Path.Combine(DATA_PATH, PACKAGE_NAME);
+        if (Directory.Exists(packageNamePath))
         {
-            // Delete the entire data directory and its contents
-            if (Directory.Exists(ROOT))
-            {
-                Directory.Delete(ROOT, true);
-                Debug.Log("All initialized folder & files are deleted successfully.");
-            }else
-            {
-                Debug.LogWarning("Nothing found! No folder & files are deleted.");
-            }
-            
-            if (Directory.Exists(DATA_PATH))
-            {
-                Directory.Delete(DATA_PATH, true);
-                Debug.Log("All initialized save data deleted successfully.");
-            }
-            else
-            {
-                Debug.LogWarning("Data directory not found. No data to delete.");
-            }
-            
+            Directory.Delete(packageNamePath, true);
+            Debug.Log("All initialized folder & files are deleted successfully.");
+        }else
+        {
+            Debug.LogWarning("Nothing found! No folder & files are deleted.");
         }
-        catch (Exception ex)
+
+        if (Directory.Exists("Assets/UPMAssistant"))
         {
-            Debug.LogError("Error deleting initialized data: " + ex.Message);
+            Directory.Delete("Assets/UPMAssistant", true);
+            Debug.Log("All initialized folder & files are deleted successfully.");
+        }else
+        {
+            Debug.LogWarning("Nothing found! No folder & files are deleted.");
         }
     }
 

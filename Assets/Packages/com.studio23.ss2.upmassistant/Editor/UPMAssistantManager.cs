@@ -11,9 +11,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
 {
     public class UPMAssistantManager: GitHubLicenseHandler
     {
-        
-        
-       // private static string _root;
+        // private static string _root;
         private static string _packageName;
         
         // warning message
@@ -217,8 +215,10 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 EditorGUILayout.HelpBox(_warningMessage, _messageType);
             }
             
-            GUI.backgroundColor = Color.green;
-            if (GUILayout.Button("Generate UPM System", GUILayout.Height(40)))
+            GUILayout.Space(10);
+            EditorGUI.BeginDisabledGroup(DataManager.LoadPackageNameData() == "");
+            GUI.backgroundColor = DataManager.LoadPackageNameData() == "" ? Color.gray : Color.green;
+            if (GUILayout.Button(DataManager.LoadPackageNameData() == ""? "Restart or Refresh":"Generate UPM System", GUILayout.Height(40)))
             {
                 if (_packageName == "")
                 {
@@ -228,7 +228,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 DataManager.SavePackageNameData(_packageName);
                 CreateFolderStructure();
             }
-
+            EditorGUI.EndDisabledGroup();
             GUI.backgroundColor = Color.white; // Reset the background color
         }
 
