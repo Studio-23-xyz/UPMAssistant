@@ -130,7 +130,7 @@ public static class DataManager
 
     public static void DeletedSaveData()
     {
-        var packageNamePath = Path.Combine(DATA_PATH, PACKAGE_NAME);
+        var packageNamePath = ROOT + LoadPackageNameData();
         if (Directory.Exists(packageNamePath))
         {
             Directory.Delete(packageNamePath, true);
