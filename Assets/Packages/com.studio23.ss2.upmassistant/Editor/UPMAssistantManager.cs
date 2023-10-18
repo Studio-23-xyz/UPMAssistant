@@ -23,7 +23,9 @@ namespace Studio23.SS2.UPMAssistant.Editor
         [MenuItem("Studio-23/UPM Assistant/Generator", priority = 0)]
         public static void ShowWindow()
         {
-            GetWindow<UPMAssistantManager>("PackageJsonController Window");
+            UPMAssistantManager window =GetWindow<UPMAssistantManager>("PackageJsonController Window");
+            window.titleContent = new GUIContent("UPM System Generator Window");
+             
         }
         private void OnEnable()
         {
@@ -37,6 +39,19 @@ namespace Studio23.SS2.UPMAssistant.Editor
             LoadPackageName();
             LoadExistenceFileFolderStructure();
             FetchOnlineGitLicenses();
+        }
+        private static void RestartWindow()
+        {
+            UPMAssistantManager window = GetWindow<UPMAssistantManager>();
+            if (window != null)
+            {
+                window.Close();
+                ShowWindow();
+            }
+            else
+            {
+                Debug.LogError("My Custom Editor Window not found.");
+            }
         }
          private void LoadPackageName()
          {
@@ -103,7 +118,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
                         //DeleteFolder(Root + packageName);
                         //PlayerPrefs.DeleteKey("packageName");
                         DataManager.DeletedSaveData();
-                        Refresh();
+                        RestartWindow();
                         ShowNotification("Folder deleted successfully.");
                     }
                     else

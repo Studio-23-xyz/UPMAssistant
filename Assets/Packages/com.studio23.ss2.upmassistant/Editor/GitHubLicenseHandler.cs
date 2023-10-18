@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using Studio23.SS2.UPMAssistant.Editor.Data;
 using UnityEngine.Serialization;
 
 namespace Studio23.SS2.UPMAssistant.Editor
@@ -17,13 +18,14 @@ using System.Collections.Generic;
 
 public class GitHubLicenseHandler : EditorWindow
 {
+    public SharedGUIContent sharedContent;
+    
     private const string APIURL = "https://api.github.com/licenses";
     public List<GitHubLicense> gitHubLicense;
     public License license;
     public int SelectedLicenceIndex;
-    public const string DefaultLicenceURL = "https://api.github.com/licenses/mit";//"https://api.github.com/licenses/lgpl-2.1";
     public string SelectedLicenceURL = "https://api.github.com/licenses/mit"; // "https://api.github.com/licenses/lgpl-2.1";
-
+   
     [MenuItem("Studio-23/GitHub Licenses")]
     public static void ShowWindow()
     {
@@ -33,11 +35,12 @@ public class GitHubLicenseHandler : EditorWindow
     private void OnEnable()
     {
         FetchOnlineGitLicenses();
-        SelectedLicenceURL = DataManager.LoadLicenseURLData();
+       
     }
 
     public void FetchOnlineGitLicenses()
     {
+        SelectedLicenceURL = DataManager.LoadLicenseURLData();
         UnityWebRequest www = UnityWebRequest.Get(APIURL);
         www.SendWebRequest().completed += FetchLicensesCallback;
     }
@@ -54,12 +57,12 @@ public class GitHubLicenseHandler : EditorWindow
         {
             string jsonResponse = www.downloadHandler.text;
             gitHubLicense = JsonConvert.DeserializeObject<List<GitHubLicense>>(jsonResponse);
-            SelectedLicenceIndex =  SelectLicence(SelectedLicenceURL);
+            SelectedLicenceIndex =  GetLicenseIndex(SelectedLicenceURL);
             Repaint();
         }
     }
     
-    public int SelectLicence(string url)
+    public int GetLicenseIndex(string url)
     {
         int currentSelectedLicence = 0;
         if (gitHubLicense is {Count: > 0})
@@ -72,6 +75,7 @@ public class GitHubLicenseHandler : EditorWindow
     }
     private void OnGUI()
     {
+        sharedContent.DrawGUIContent();
         
         if (gitHubLicense != null && gitHubLicense.Count > 0)
         {

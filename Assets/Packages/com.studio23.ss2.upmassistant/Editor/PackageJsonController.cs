@@ -101,7 +101,7 @@ private void OnGUI()
     
     EditorGUI.BeginDisabledGroup(true);
    
-        var selectedLicenceURL =  gitHubLicense != null ? gitHubLicense[SelectedLicenceIndex].url : DefaultLicenceURL;
+        var selectedLicenceURL =  gitHubLicense != null ? gitHubLicense[SelectedLicenceIndex].url : "";
         jsonData.licensesUrl =  EditorGUILayout.TextField("-", selectedLicenceURL);
            //EditorGUILayout.TextField("Licenses URL:", jsonData.licensesUrl);
     EditorGUI.EndDisabledGroup();
