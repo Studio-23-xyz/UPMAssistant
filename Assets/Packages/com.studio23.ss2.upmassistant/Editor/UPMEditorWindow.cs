@@ -5,16 +5,16 @@ using System.IO;
 
 namespace Studio23.SS2.UPMAssistant.Editor
 {
-    public class MarkupEditorWindow : EditorWindow
+    public class UPMEditorWindow : EditorWindow
     {
         private string markupText = ""; // Variable to store the markup content
         private static string filePath = ""; // Variable to store the file path
 
-        [MenuItem("Studio-23/Markup Editor")]
-        public static void ShowWindow()
+        // [MenuItem("Studio-23/Markup Editor")]
+        public static void ShowWindow(string filePath)
         {
-            filePath = DataManager.ROOT + DataManager.LoadPackageNameData() + "/" + DataManager.LICENSE_MD;
-            GetWindow<MarkupEditorWindow>("Markup Editor");
+            if(filePath == "")
+                GetWindow<UPMEditorWindow>("UPM Editor Window");
         }
 
         private void OnGUI()

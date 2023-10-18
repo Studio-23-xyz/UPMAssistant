@@ -97,8 +97,8 @@ public static class DataManager
         }
         else
         {
-            Debug.LogError("License URL data file not found!");
-            return null;
+            Debug.LogError("License URL data file not found! returning default license URL.");
+            return DefaultLicenceURL;
         }
     }
     public static void SavePackageNameData(string packageName)

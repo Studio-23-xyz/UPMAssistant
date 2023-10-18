@@ -1,12 +1,7 @@
-﻿using UnityEditor;
-using UnityEngine;
-using UnityEngine.Networking;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿
 using System.IO;
-using Studio23.SS2.UPMAssistant.Editor.Data;
-using UnityEngine.Serialization;
+using System.Threading.Tasks;
+
 
 namespace Studio23.SS2.UPMAssistant.Editor
 {
@@ -16,36 +11,35 @@ using UnityEngine.Networking;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
-public class GitHubLicenseHandler : EditorWindow
+public static class GitHubLicenseHandler  
 {
-    public SharedGUIContent sharedContent;
     
     private const string APIURL = "https://api.github.com/licenses";
-    public List<GitHubLicense> gitHubLicense;
-    public License license;
-    public int SelectedLicenceIndex;
-    public string SelectedLicenceURL = "https://api.github.com/licenses/mit"; // "https://api.github.com/licenses/lgpl-2.1";
+    public static List<GitHubLicense> gitHubLicense;
+    public static License license;
+    public static int SelectedLicenceIndex;
+    public static string SelectedLicenceURL = "https://api.github.com/licenses/mit"; // "https://api.github.com/licenses/lgpl-2.1";
    
-    [MenuItem("Studio-23/GitHub Licenses")]
+    /*[MenuItem("Studio-23/GitHub Licenses")]
     public static void ShowWindow()
     {
         GetWindow<GitHubLicenseHandler>("GitHub Licenses");
-    }
+    }*/
 
-    private void OnEnable()
+    /*private void OnEnable()
     {
         FetchOnlineGitLicenses();
        
-    }
+    }*/
 
-    public void FetchOnlineGitLicenses()
+    public static void FetchOnlineGitLicenses()
     {
         SelectedLicenceURL = DataManager.LoadLicenseURLData();
         UnityWebRequest www = UnityWebRequest.Get(APIURL);
         www.SendWebRequest().completed += FetchLicensesCallback;
     }
 
-    private void FetchLicensesCallback(AsyncOperation operation)
+    private static void FetchLicensesCallback(AsyncOperation operation)
     {
         UnityWebRequest www = ((UnityWebRequestAsyncOperation)operation).webRequest;
 
@@ -58,22 +52,12 @@ public class GitHubLicenseHandler : EditorWindow
             string jsonResponse = www.downloadHandler.text;
             gitHubLicense = JsonConvert.DeserializeObject<List<GitHubLicense>>(jsonResponse);
             SelectedLicenceIndex =  GetLicenseIndex(SelectedLicenceURL);
-            Repaint();
+           
         }
     }
     
-    public int GetLicenseIndex(string url)
-    {
-        int currentSelectedLicence = 0;
-        if (gitHubLicense is {Count: > 0})
-        {
-            currentSelectedLicence = gitHubLicense.IndexOf(gitHubLicense.Find(x => x.url == url));
-        }
-
-        return currentSelectedLicence;
-
-    }
-    private void OnGUI()
+   
+    /*private void OnGUI()
     {
         sharedContent.DrawGUIContent();
         
@@ -95,22 +79,19 @@ public class GitHubLicenseHandler : EditorWindow
         {
             GUILayout.Label("Loading licenses...");
         }
-    }
+    }*/
 
-  
     
-    public void SaveLicense(string licenseFilePath)
+    public static bool IsDownloading = false;
+    public static void DownloadLicence()
     {
-        if (File.Exists(licenseFilePath))
-        {
-            LicenseFilePath = licenseFilePath;
-            UnityWebRequest www = UnityWebRequest.Get(gitHubLicense[SelectedLicenceIndex].url);
+        IsDownloading = true;
+        UnityWebRequest www = UnityWebRequest.Get(DataManager.LoadLicenseURLData());
             www.SendWebRequest().completed += FetchLicensesCallback2;
-        }
     }
 
-    private string LicenseFilePath;
-    private void FetchLicensesCallback2(AsyncOperation operation)
+   
+    private static void FetchLicensesCallback2(AsyncOperation operation)
     {
         UnityWebRequest www = ((UnityWebRequestAsyncOperation)operation).webRequest;
 
@@ -122,10 +103,38 @@ public class GitHubLicenseHandler : EditorWindow
         {
             string jsonResponse = www.downloadHandler.text;
             license = JsonConvert.DeserializeObject<License>(jsonResponse);
-            File.WriteAllText(LicenseFilePath, license.body);
+            var licenseFilePath =
+                Path.Combine(DataManager.ROOT + DataManager.LoadPackageNameData(), DataManager.LICENSE_MD);
+            if (!File.Exists(licenseFilePath))
+            {
+                Debug.LogError("License file not found!");
+                return;
+            }
+            File.WriteAllText(licenseFilePath, string.Empty);
+            File.WriteAllText(licenseFilePath, license.body);
+
         }
+        IsDownloading = false;
     }
-    
+    public static int GetLicenseIndex(string url)
+    {
+        int currentSelectedLicence = 0;
+        if (gitHubLicense is {Count: > 0})
+        {
+            currentSelectedLicence = gitHubLicense.IndexOf(gitHubLicense.Find(x => x.url == url));
+        }
+        return currentSelectedLicence;
+    }
+    public static string GetLicenseURL()
+    {
+        var currentSelectedLicence = DataManager.DefaultLicenceURL;
+        if (gitHubLicense is {Count: > 0})
+        {
+            currentSelectedLicence = gitHubLicense[SelectedLicenceIndex].url;
+        }
+        return currentSelectedLicence;
+
+    }
 }
 
 [System.Serializable]

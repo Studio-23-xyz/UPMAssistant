@@ -10,12 +10,12 @@ using UnityEngine.Serialization;
 
 namespace Studio23.SS2.UPMAssistant.Editor
 {
-    public class PackageJsonController : GitHubLicenseHandler
+    public class PackageJsonController : EditorWindow
     {
         private PackageJsonData jsonData; 
         
         private string jsonFilePath;
-       private string licenseFilePath;
+       
 
         // warning message
         private string warningMessage = ""; // Warning message to display
@@ -33,15 +33,15 @@ namespace Studio23.SS2.UPMAssistant.Editor
         private void OnEnable()
         {
             LoadPreDefineValue();
-            FetchOnlineGitLicenses();
-            SelectedLicenceURL = jsonData.licensesUrl;
+             
+             
         }
 
         private void LoadPreDefineValue()
         {
             jsonData = new PackageJsonData();
             jsonFilePath = Path.Combine(DataManager.ROOT + DataManager.LoadPackageNameData(), DataManager.PACKAGE_JSON);
-            licenseFilePath = Path.Combine(DataManager.ROOT + DataManager.LoadPackageNameData(), DataManager.LICENSE_MD);
+           
             LoadData();
         }
     
@@ -84,29 +84,12 @@ private void OnGUI()
     jsonData.documentationUrl = EditorGUILayout.TextField("Documentation URL:", jsonData.documentationUrl);
     jsonData.changelogUrl = EditorGUILayout.TextField("Changelog URL:", jsonData.changelogUrl);
 
-    #region Licenses
-
-        if (gitHubLicense != null && gitHubLicense.Count > 0)
-        {
-            List<string> licenseNames = new List<string>();
-            foreach (var license in gitHubLicense)  licenseNames.Add(license.name);
-
-            SelectedLicenceIndex = EditorGUILayout.Popup("Select License", SelectedLicenceIndex, licenseNames.ToArray());
-        }
-        else
-        {
-            GUILayout.Label("Online licenses are not found! Loading...");
-             
-        }
-    
-    EditorGUI.BeginDisabledGroup(true);
    
-        var selectedLicenceURL =  gitHubLicense != null ? gitHubLicense[SelectedLicenceIndex].url : "";
-        jsonData.licensesUrl =  EditorGUILayout.TextField("-", selectedLicenceURL);
+    #region Licenses
+    EditorGUI.BeginDisabledGroup(true);
+    jsonData.licensesUrl =  EditorGUILayout.TextField("License URL: ", DataManager.LoadLicenseURLData());
            //EditorGUILayout.TextField("Licenses URL:", jsonData.licensesUrl);
     EditorGUI.EndDisabledGroup();
-    
-    
     #endregion
 
     GUILayout.Space(20); // Add vertical space between sections
@@ -246,9 +229,9 @@ private void OnGUI()
                 UPMAssistantManager.ShowWindow();
             }
                 
-            if (File.Exists(licenseFilePath))
+            /*if (File.Exists(licenseFilePath))
             {
-                SaveLicense(licenseFilePath);
+                DownloadLicence(licenseFilePath);
                 ShowNotification($"File created with data: " + licenseFilePath);
             }
             else
@@ -256,7 +239,7 @@ private void OnGUI()
                 // show warning
                 ShowNotification($"Create {DataManager.LICENSE_MD} using UPM System Generator", MessageType.Error);
                 UPMAssistantManager.ShowWindow();
-            }
+            }*/
             
             /*if (UPMAssistantManager.FolderAndFilesList.ContainsKey(UPMAssistantManager.PACKAGE_JSON))
             {

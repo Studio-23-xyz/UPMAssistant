@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Studio23.SS2.UPMAssistant.Editor.Data;
 using UnityEditor;
 using UnityEditor.Compilation;
 using UnityEditorInternal;
@@ -9,8 +10,9 @@ using UnityEngine;
 
 namespace Studio23.SS2.UPMAssistant.Editor
 {
-    public class UPMAssistantManager: GitHubLicenseHandler
+    public class UPMAssistantManager: EditorWindow
     {
+       
         // private static string _root;
         private static string _packageName;
         
@@ -38,7 +40,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
             DataManager.Initialized();
             LoadPackageName();
             LoadExistenceFileFolderStructure();
-            FetchOnlineGitLicenses();
+           
         }
         private static void RestartWindow()
         {
@@ -191,8 +193,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
                         {
                             
                             #region Licenses
-
-                            if (gitHubLicense != null && gitHubLicense.Count > 0)
+                            SharedGUIContent.Instance.DrawGUIContent();
+                            /*if (gitHubLicense != null && gitHubLicense.Count > 0)
                             {
                                 List<string> licenseNames = new List<string>();
                                 foreach (var license in gitHubLicense)  licenseNames.Add(license.name);
@@ -204,7 +206,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
                                 GUILayout.Label("Online licenses are not found! Loading...");
              
                             }
-                            #endregion
+                          
                             
                             GUILayout.BeginHorizontal();
                             if (GUILayout.Button("Configure"))
@@ -215,7 +217,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
                             {
                                 Application.OpenURL("https://choosealicense.com/");
                             }
-                            GUILayout.EndHorizontal();
+                            GUILayout.EndHorizontal();*/
+                            #endregion
                         }
                            
                     }
