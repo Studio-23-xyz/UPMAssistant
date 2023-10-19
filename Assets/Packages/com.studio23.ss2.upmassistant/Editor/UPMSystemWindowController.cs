@@ -239,7 +239,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
             #region SubmitOption
 
             GUI.backgroundColor = Color.green;
-            if (GUILayout.Button("Generate UPM System", GUILayout.Height(40)))
+            if (GUILayout.Button("Generate", GUILayout.Height(40)))
             {
                 if (_packageName == "")
                 {
