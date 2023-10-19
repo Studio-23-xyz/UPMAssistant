@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Studio23.SS2.UPMAssistant.Editor.Data;
@@ -10,12 +11,12 @@ namespace Studio23.SS2.UPMAssistant.Editor
 {
     public class PackageJsonWindowController : EditorWindow
     {
-        private PackageJsonData jsonData; 
+        private PackageJsonData _jsonData; 
         
-        private string warningMessage = ""; // Warning message to display
-        private float warningDuration = 3f; // Duration to display the warning in seconds
-        private float warningStartTime; // Time when the warning started
-        private MessageType messageType = MessageType.Info;
+        private string _warningMessage = ""; // Warning message to display
+        private const float WarningDuration = 3f; // Duration to display the warning in seconds
+        private float _warningStartTime; // Time when the warning started
+        private MessageType _messageType = MessageType.Info;
         public static void CreateWizard()
         {
             PackageJsonWindowController window = GetWindow<PackageJsonWindowController>(true, "Generate package.json");
@@ -29,65 +30,68 @@ namespace Studio23.SS2.UPMAssistant.Editor
 
         private void LoadPackageJson()
         {
-            PackageHandler. FilePath = Path.Combine(DataHandler.ROOT + DataHandler.LoadPackageNameData(), DataHandler.PACKAGE_JSON);
-            jsonData = PackageHandler.CheckUpdateOnDisabledProperties(PackageHandler.LoadData());
+            string packageNameData = DataHandler.GetSavedPackagedName();
+            string filePath = Path.Combine(DataHandler.Root + packageNameData, DataHandler.PackageJson);
+            PackageHandler.FilePath = filePath;
+            _jsonData = PackageHandler.LoadData();
+            _jsonData = PackageHandler.CheckUpdateOnDisabledProperties(_jsonData);
         }
     
         private void OnGUI()
         {
            
-            GUILayout.Label($"{DataHandler.PACKAGE_JSON} Settings", EditorStyles.boldLabel);
+            GUILayout.Label($"{DataHandler.PackageJson} Settings", EditorStyles.boldLabel);
             
 
             EditorGUI.BeginDisabledGroup(true); // Begin disabled group
             EditorGUILayout.TextField("File Location:", PackageHandler.FilePath);
             GUILayout.Space(10); 
-            jsonData.name = EditorGUILayout.TextField("Name:", jsonData.name);
+            _jsonData.Name = EditorGUILayout.TextField("Name:", _jsonData.Name);
             
             EditorGUILayout.BeginHorizontal();
-            jsonData.version = EditorGUILayout.TextField("Version:", jsonData.version);
+            _jsonData.Version = EditorGUILayout.TextField("Version:", _jsonData.Version);
             GUILayout.Label($"Project Settings -> Player Settings -> Version", EditorStyles.label);
             EditorGUILayout.EndHorizontal();
             
             
             
             EditorGUILayout.BeginHorizontal();
-            jsonData.displayName = EditorGUILayout.TextField("Display Name:", jsonData.displayName);
+            _jsonData.DisplayName = EditorGUILayout.TextField("Display Name:", _jsonData.DisplayName);
             GUILayout.Label($"Project Settings -> Player Settings -> Product Name", EditorStyles.label);
             EditorGUILayout.EndHorizontal();
             
             EditorGUI.EndDisabledGroup(); // End disabled group
             GUILayout.Label($"Description", EditorStyles.label);
-            jsonData.description = EditorGUILayout.TextArea( jsonData.description, GUILayout.Height(40));
+            _jsonData.Description = EditorGUILayout.TextArea( _jsonData.Description, GUILayout.Height(40));
             
             EditorGUI.BeginDisabledGroup(true); // Begin disabled group
             EditorGUILayout.BeginHorizontal();
-            jsonData.unity = EditorGUILayout.TextField("Unity Version:", jsonData.unity);
-            jsonData.unityRelease = EditorGUILayout.TextField("Unity Release:", jsonData.unityRelease);
+            _jsonData.Unity = EditorGUILayout.TextField("Unity Version:", _jsonData.Unity);
+            _jsonData.UnityRelease = EditorGUILayout.TextField("Unity Release:", _jsonData.UnityRelease);
             EditorGUILayout.EndHorizontal();
             EditorGUI.EndDisabledGroup(); // End disabled group
             
-            jsonData.documentationUrl = EditorGUILayout.TextField("Documentation URL:", jsonData.documentationUrl);
-            jsonData.changelogUrl = EditorGUILayout.TextField("Changelog URL:", jsonData.changelogUrl);
+            _jsonData.DocumentationUrl = EditorGUILayout.TextField("Documentation URL:", _jsonData.DocumentationUrl);
+            _jsonData.ChangelogUrl = EditorGUILayout.TextField("Changelog URL:", _jsonData.ChangelogUrl);
 
            
             #region Licenses
             EditorGUI.BeginDisabledGroup(true);
-            jsonData.licensesUrl =  EditorGUILayout.TextField("License URL: ", DataHandler.LoadLicenseURLData());
+            _jsonData.LicensesUrl =  EditorGUILayout.TextField("License URL: ", DataHandler.GetSavedLicenseURL());
                    //EditorGUILayout.TextField("Licenses URL:", jsonData.licensesUrl);
             EditorGUI.EndDisabledGroup();
             #endregion
 
             GUILayout.Space(20); // Add vertical space between sections
             GUILayout.Label("Scoped Registries", EditorStyles.boldLabel);
-            foreach (var scopedRegistry in jsonData.scopedRegistries)
+            foreach (var scopedRegistry in _jsonData.ScopedRegistries)
             {
-                scopedRegistry.name = EditorGUILayout.TextField("Name:", scopedRegistry.name);
-                scopedRegistry.url = EditorGUILayout.TextField("URL:", scopedRegistry.url);
+                scopedRegistry.Name = EditorGUILayout.TextField("Name:", scopedRegistry.Name);
+                scopedRegistry.URL = EditorGUILayout.TextField("URL:", scopedRegistry.URL);
                 EditorGUILayout.LabelField("Scopes:");
-                for (int i = 0; i < scopedRegistry.scopes.Count; i++)
+                for (int i = 0; i < scopedRegistry.Scopes.Count; i++)
                 {
-                    scopedRegistry.scopes[i] = EditorGUILayout.TextField($"Scope {i + 1}:", scopedRegistry.scopes[i]);
+                    scopedRegistry.Scopes[i] = EditorGUILayout.TextField($"Scope {i + 1}:", scopedRegistry.Scopes[i]);
                 }
             }
             GUILayout.Space(10); // Add vertical space between scopes and buttons
@@ -98,29 +102,31 @@ namespace Studio23.SS2.UPMAssistant.Editor
             
             
             
-            for (int i = 0; i < jsonData.dependencies.Count; i++)
+            for (int i = 0; i < _jsonData.Dependencies.Count; i++)
             {
                 EditorGUILayout.BeginHorizontal();
                 GUILayout.Space(20); // Add left padding
 
-                var dependency = jsonData.dependencies.ElementAt(i);
+                var dependency = _jsonData.Dependencies.ElementAt(i);
                 string dependencyName = EditorGUILayout.TextField("Name:", dependency.Key);
                 string dependencyVersion = EditorGUILayout.TextField("Version:", dependency.Value);
-            
-                // Update the dictionary entry if the name has changed
-                if (dependencyName != dependency.Key)
+                
+                List<KeyValuePair<string, string>> itemsToUpdate = new List<KeyValuePair<string, string>>();
+                if (dependencyName != dependency.Key || dependencyVersion != dependency.Value)
                 {
-                    jsonData.dependencies.Remove(dependency.Key);
-                    jsonData.dependencies[dependencyName] = dependencyVersion;
-                }else if( dependencyVersion != dependency.Value)
+                    itemsToUpdate.Add(new KeyValuePair<string, string>(dependency.Key, dependencyVersion));
+                }
+
+                foreach (var item in itemsToUpdate)
                 {
-                    jsonData.dependencies[dependencyName] = dependencyVersion;
+                    _jsonData.Dependencies.Remove(item.Key);
+                    _jsonData.Dependencies.Add(item.Key, item.Value);
                 }
                 
                 if (GUILayout.Button("Remove", GUILayout.Width(80)))
                 {
                     // Remove the dictionary entry based on the key
-                    jsonData.dependencies.Remove(dependency.Key);
+                    _jsonData.Dependencies.Remove(dependency.Key);
                     break; // Exit the loop after removal
                 }
                 EditorGUILayout.EndHorizontal();
@@ -130,7 +136,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
             {
                 // Add a new empty entry to the dictionary
                 string uniqueID =  DateTime.Now.Ticks.ToString();//Guid.NewGuid();
-                jsonData.dependencies.Add($"Package Name {uniqueID}", "Version");
+                _jsonData.Dependencies.Add($"Package Name {uniqueID}", "Version");
             }
 
             #endregion
@@ -138,21 +144,21 @@ namespace Studio23.SS2.UPMAssistant.Editor
             #region Keywords
 
             GUILayout.Label("Keywords", EditorStyles.boldLabel);
-            for (int i = 0; i < jsonData.keywords.Count; i++)
+            for (int i = 0; i < _jsonData.Keywords.Count; i++)
             {
                 EditorGUILayout.BeginHorizontal();
                 GUILayout.Space(20); // Add left padding
-                jsonData.keywords[i] = EditorGUILayout.TextField($"Keyword {i + 1}:", jsonData.keywords[i]);
+                _jsonData.Keywords[i] = EditorGUILayout.TextField($"Keyword {i + 1}:", _jsonData.Keywords[i]);
                 if (GUILayout.Button("Remove", GUILayout.Width(80)))
                 {
-                    jsonData.keywords.RemoveAt(i);
+                    _jsonData.Keywords.RemoveAt(i);
                 }
                 EditorGUILayout.EndHorizontal();
             }
 
             if (GUILayout.Button("Add Keyword", GUILayout.Width(150)))
             {
-                jsonData.keywords.Add("");
+                _jsonData.Keywords.Add("");
             }
 
             GUILayout.Space(20); // Add vertical space between sections
@@ -163,35 +169,32 @@ namespace Studio23.SS2.UPMAssistant.Editor
             
             EditorGUI.BeginDisabledGroup(true); // Begin disabled group
             EditorGUILayout.BeginHorizontal();
-            jsonData.author.name = EditorGUILayout.TextField("Name:", jsonData.author.name);
+            _jsonData.Author.Name = EditorGUILayout.TextField("Name:", _jsonData.Author.Name);
             GUILayout.Label($"Project Settings -> Player Settings -> Company Name", EditorStyles.label);
             EditorGUILayout.EndHorizontal();
             EditorGUI.EndDisabledGroup();
             
-            jsonData.author.email = EditorGUILayout.TextField("Email:", jsonData.author.email);
-            jsonData.author.url = EditorGUILayout.TextField("URL:", jsonData.author.url);
+            _jsonData.Author.Email = EditorGUILayout.TextField("Email:", _jsonData.Author.Email);
+            _jsonData.Author.URL = EditorGUILayout.TextField("URL:", _jsonData.Author.URL);
 
             GUILayout.Space(10); // Add vertical space
 
-            if (!string.IsNullOrEmpty(warningMessage) && Time.realtimeSinceStartup - warningStartTime < warningDuration)
+            if (!string.IsNullOrEmpty(_warningMessage) && Time.realtimeSinceStartup - _warningStartTime < WarningDuration)
             {
-                EditorGUILayout.HelpBox(warningMessage, messageType);
+                EditorGUILayout.HelpBox(_warningMessage, _messageType);
             }
             GUI.backgroundColor = Color.green;
             if (GUILayout.Button("Generate", GUILayout.Height(35)))
             {
-                PackageHandler.SaveData(jsonData);
+                PackageHandler.SaveData(_jsonData);
             }
             GUI.backgroundColor = Color.white; 
         }
- 
-
-       
         private void ShowNotification(string message, MessageType msgType = MessageType.Info)
         {
-            messageType = msgType;
-            warningMessage = message;
-            warningStartTime = Time.realtimeSinceStartup;
+            _messageType = msgType;
+            _warningMessage = message;
+            _warningStartTime = Time.realtimeSinceStartup;
         }
     }
 }

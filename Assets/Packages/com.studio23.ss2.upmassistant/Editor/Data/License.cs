@@ -1,25 +1,44 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using Newtonsoft.Json; // Make sure to include the Newtonsoft.Json namespace for JsonProperty attribute
 
-namespace Studio23.SS2.UPMAssistant.Editor.Data
+public class License
 {
-    [System.Serializable]
-    public class License
-    {
-        public string key;
-        public string name;
-        public string spdx_id;
-        public string url;
-        public string node_id;
-        public string html_url;
-        public string description;
-        public string implementation;
-        public List<string> permissions;
-        public List<string> conditions;
-        public List<string> limitations;
-        public string body;
-        public bool featured;
-    }
-
+    [JsonProperty("key")]
+    public string Key;
+    
+    [JsonProperty("name")]
+    public string Name;
+    
+    [JsonProperty("spdx_id")]
+    public string SPDXId;
+    
+    [JsonProperty("url")]
+    public string URL;
+    
+    [JsonProperty("node_id")]
+    public string NodeId;
+    
+    [JsonProperty("html_url")]
+    public string HtmlURL;
+    
+    [JsonProperty("description")]
+    public string Description;
+    
+    [JsonProperty("implementation")]
+    public string Implementation;
+    
+    [JsonProperty("permissions")]
+    public List<string> Permissions;
+    
+    [JsonProperty("conditions")]
+    public List<string> Conditions;
+    
+    [JsonProperty("limitations")]
+    public List<string> Limitations;
+    
+    [JsonProperty("body")]
+    public string Body;
+    
+    [JsonProperty("featured")]
+    public bool Featured;
 }

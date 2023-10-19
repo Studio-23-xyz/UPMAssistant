@@ -16,7 +16,9 @@
 
 - Delete system, delete folder structure with save data
 - Create folder structure if not exist
-- Automatically update pacakge.json name, company name, package version while updating in Player Settings
-- Automatically get Licenses from online, fetch, show in dropdown, download, save, update, delete, update package.josn while updating license
 - Markup edit system
 - Added assembly under Runtime folder, added two folders under Runtime folder: Core, Data
+- Introduced online license fetching system
+- Licenses can be fetched, displayed in a dropdown, downloaded, saved, updated, and deleted
+- package.json is automatically updated when updating the license
+- Automatically update package.json name, company name, package version while updating in Player Settings

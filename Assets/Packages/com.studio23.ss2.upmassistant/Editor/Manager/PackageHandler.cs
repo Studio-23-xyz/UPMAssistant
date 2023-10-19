@@ -65,66 +65,62 @@ namespace Studio23.SS2.UPMAssistant.Editor
         {
             var haveUpdate = false;
 
-            haveUpdate |= UpdateField(jsonData, "name", DataHandler.LoadPackageNameData());
+            haveUpdate |= UpdateField(jsonData, "name", DataHandler.GetSavedPackagedName());
             haveUpdate |= UpdateField(jsonData, "version", Application.version);
             haveUpdate |= UpdateField(jsonData, "displayName", Application.productName);
-            haveUpdate |= UpdateField(jsonData, "licensesUrl", DataHandler.LoadLicenseURLData());
-            haveUpdate |= UpdateField(jsonData.author, "name", Application.companyName);
+            haveUpdate |= UpdateField(jsonData, "licensesUrl", DataHandler.GetSavedLicenseURL());
+            haveUpdate |= UpdateField(jsonData, "author.name", Application.companyName);
 
             return haveUpdate;
         }
-        private static bool UpdateField<T>(object obj, string fieldName, T newValue)
+        // Check is there any update on unity PlayerSettings or github license
+        private static bool UpdateField<T>(PackageJsonData jsonData, string fieldName, T newValue)
         {
-            var field = obj.GetType().GetField(fieldName);
+            var field = jsonData.GetType().GetField(fieldName);
             if (field != null)
             {
-                var currentValue = field.GetValue(obj);
+                var currentValue = field.GetValue(jsonData);
                 if (!EqualityComparer<T>.Default.Equals((T)currentValue, newValue))
                 {
-                    field.SetValue(obj, newValue);
+                    field.SetValue(jsonData, newValue);
                     return true;
                 }
             }
-
             return false;
         }
         
         private static PackageJsonData LoadDefaultPackageJsonData()
         {
+            TextAsset jsonFile = Resources.Load<TextAsset>("DefaultPackageJsonData");
+            PackageJsonData defaultJsonData = null;
+            if (jsonFile != null)
+            {
+                defaultJsonData = JsonConvert.DeserializeObject<PackageJsonData>(jsonFile.text);
+            }
             PackageJsonData data = new PackageJsonData();
-            data.name = DataHandler.LoadPackageNameData();
-            data.version = Application.version; // 1.0.1
-            data.displayName = Application.productName; // UPM Assistant
-            data.description = "The UPM Assistant is an editor extension tool designed to simplify the process of creating folder structures required for Unity packages that are published on  openupm.com";
+            data.Name = DataHandler.GetSavedPackagedName();
+            data.Version = Application.version; 
+            data.DisplayName = Application.productName; 
+            if (defaultJsonData != null) data.Description = defaultJsonData.Description;
             string[] unityVersion = Application.unityVersion.Split(".");
-            data.unity = unityVersion[0] +"."+ unityVersion[1];//"2022.3";
-            data.unityRelease = unityVersion[2]; //"9f1";
-            data.documentationUrl = $"https://openupm.com/packages/{DataHandler.LoadPackageNameData()}";
-            data.changelogUrl = $"https://openupm.com/packages/{DataHandler.LoadPackageNameData()}";
-            data.licensesUrl = $"{DataHandler.LoadLicenseURLData()}";//"https://api.github.com/licenses/mit";
-
-            ScopedRegistry scopedRegistry = new ScopedRegistry()
+            data.Unity = $"{unityVersion[0]}.{unityVersion[1]}";
+            data.UnityRelease = unityVersion[2]; 
+            data.DocumentationUrl = $"https://openupm.com/packages/{DataHandler.GetSavedPackagedName()}";
+            data.ChangelogUrl = $"https://openupm.com/packages/{DataHandler.GetSavedPackagedName()}";
+            data.LicensesUrl = $"{DataHandler.GetSavedLicenseURL()}"; 
+            if (defaultJsonData != null)
             {
-                name = "Studio 23",
-                url = "https://package.openupm.com",
-                scopes = new List<string> { "com.studio23.ss2"}
-            };
-            data.scopedRegistries = new List<ScopedRegistry>
-            {
-                scopedRegistry,
-            };
-           
-           
-            data.dependencies = new Dictionary<string, string>(){
-                {"com.unity.nuget.newtonsoft-json", "3.2.1"},
-                
-            };
-            
-
-            data.keywords = Application.productName.Split(" ").ToList();; //new List<string> { "UPM", "Assistant", "System" };
-            data.author.name = Application.companyName;// Studio 23
-            data.author.email = "contact@studio-23.xyz";
-            data.author.url = "https://studio-23.xyz";
+                ScopedRegistry scopedRegistry = defaultJsonData.ScopedRegistries[0];
+                data.ScopedRegistries = new List<ScopedRegistry>
+                {
+                    scopedRegistry,
+                };
+            }
+            if (defaultJsonData != null) data.Dependencies = defaultJsonData.Dependencies;
+            data.Keywords = Application.productName.Split(" ").ToList();; 
+            data.Author.Name = Application.companyName;
+            if (defaultJsonData != null) data.Author.Email = defaultJsonData.Author.Email;
+            if (defaultJsonData != null) data.Author.URL = defaultJsonData.Author.URL;
 
             return data;
         } 

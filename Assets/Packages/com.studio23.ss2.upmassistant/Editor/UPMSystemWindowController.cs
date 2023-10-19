@@ -8,8 +8,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
 {
     public class UPMSystemWindowController: EditorWindow
     {
-       
-        // private static string _root;
+        
         private static string _packageName;
         
         // warning message
@@ -18,12 +17,12 @@ namespace Studio23.SS2.UPMAssistant.Editor
         private float _warningStartTime; // Time when the warning started
         private MessageType _messageType = MessageType.Info;
         
-        [MenuItem("Studio-23/UPM Assistant/Generator", priority = 0)]
+        [MenuItem("Studio-23/UPM Package Template Generator/Wizard", priority = 0)]
         public static void ShowWindow()
         {
-            UPMSystemWindowController window =GetWindow<UPMSystemWindowController>("PackageJsonWindowController Window");
+            UPMSystemWindowController window =GetWindow<UPMSystemWindowController>();
             window.minSize = new Vector2(600, 600); 
-            window.titleContent = new GUIContent("UPM System Generator Window");
+            window.titleContent = new GUIContent("Wizard - UPM Package Template Generator");
              
         }
         private void OnEnable()
@@ -55,7 +54,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
          private void LoadPackageName()
          {
             _packageName = "";
-            if (string.IsNullOrEmpty(_packageName)) _packageName = DataHandler.LoadPackageNameData(); 
+            if (string.IsNullOrEmpty(_packageName)) _packageName = DataHandler.GetSavedPackagedName(); 
         }
         private void LoadExistenceFileFolderStructure()
         {
@@ -66,12 +65,12 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 {
                     // For files, check if the file exists
                     var entryKey = $"{entry.Key.Replace("[[packagename]]", $"{_packageName}")}";
-                    DataHandler.FolderAndFilesList[entry.Key] = File.Exists(DataHandler.ROOT + _packageName + "/" + entryKey);
+                    DataHandler.FolderAndFilesList[entry.Key] = File.Exists(DataHandler.Root + _packageName + "/" + entryKey);
                 }
                 else
                 {
                     // For folders, check if the folder exists
-                    DataHandler.FolderAndFilesList[entry.Key] = AssetDatabase.IsValidFolder(DataHandler.ROOT + _packageName + "/" + entry.Key);
+                    DataHandler.FolderAndFilesList[entry.Key] = AssetDatabase.IsValidFolder(DataHandler.Root + _packageName + "/" + entry.Key);
                 }
             }
         }
@@ -106,7 +105,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
             if (GUILayout.Button("Delete System", GUILayout.Width(position.width / 4 - 5)))
             {
               
-                if (DataHandler.LoadPackageNameData() != null)
+                if (DataHandler.GetSavedPackagedName() != null)
                 {
                     bool userConfirmed = EditorUtility.DisplayDialog("Delete Folder",
                         "Are you sure you want to delete the folder and its contents?",
@@ -164,11 +163,11 @@ namespace Studio23.SS2.UPMAssistant.Editor
 
                 #region Configure
 
-                if (entry.Key == DataHandler.PACKAGE_JSON)
+                if (entry.Key == DataHandler.PackageJson)
                 {
                     if (entry.Value)
                     { 
-                        var isThisFileAlreadyCreated = File.Exists(DataHandler.ROOT + _packageName + "/" + entry.Key);
+                        var isThisFileAlreadyCreated = File.Exists(DataHandler.Root + _packageName + "/" + entry.Key);
 
                         if (isThisFileAlreadyCreated)
                         {
@@ -181,12 +180,12 @@ namespace Studio23.SS2.UPMAssistant.Editor
                     }
                       
                 } 
-                else if (entry.Key == DataHandler.README_MD || entry.Key == DataHandler.CHANGELOG_MD || entry.Key == DataHandler.THIRDPARTYNOTICES_MD)
+                else if (entry.Key == DataHandler.ReadmeMD || entry.Key == DataHandler.ChangelogMD || entry.Key == DataHandler.ThirdPartyNoticesMD)
                 {
                     if (entry.Value)
                     { 
                         var fileExist =
-                            Path.Combine(DataHandler.ROOT + DataHandler.LoadPackageNameData(), entry.Key);
+                            Path.Combine(DataHandler.Root + DataHandler.GetSavedPackagedName(), entry.Key);
 
                         if (File.Exists(fileExist))
                         {
@@ -199,11 +198,11 @@ namespace Studio23.SS2.UPMAssistant.Editor
                     }
                       
                 } 
-                else if (entry.Key == DataHandler.LICENSE_MD)
+                else if (entry.Key == DataHandler.LicenseMD)
                 {
                     if (entry.Value)
                     { 
-                        var isThisFileAlreadyCreated = File.Exists(DataHandler.ROOT + _packageName + "/" + entry.Key);
+                        var isThisFileAlreadyCreated = File.Exists(DataHandler.Root + _packageName + "/" + entry.Key);
 
                         if (isThisFileAlreadyCreated)
                         {
@@ -262,17 +261,15 @@ namespace Studio23.SS2.UPMAssistant.Editor
             _warningMessage = message;
             _warningStartTime = Time.realtimeSinceStartup;
         }
-       public void CreateFolderStructure()
+
+        private void CreateFolderStructure()
        {
-           
-           var packageDirectory = DataHandler.ROOT + DataHandler.LoadPackageNameData();
+           var packageDirectory = DataHandler.Root + DataHandler.GetSavedPackagedName();
            if (!Directory.Exists(packageDirectory))
            {
                Directory.CreateDirectory(packageDirectory);
                Debug.Log("Folder structure created: " + packageDirectory);
            }
-           
-
            foreach (var entry in DataHandler.FolderAndFilesList)
            {
                if (entry.Value)
@@ -287,7 +284,6 @@ namespace Studio23.SS2.UPMAssistant.Editor
                    }
                }
            }
-
            Refresh();
            ShowNotification($"Folder structure created successfully.");
        }
@@ -313,7 +309,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
        }
        void CreateFileAsmdef(string packageDirectory, string fileName)
        {
-           string filePath = Path.Combine(packageDirectory, $"{fileName.Replace("[[packagename]]",$"{DataHandler.LoadPackageNameData()}")}");
+           string filePath = Path.Combine(packageDirectory, $"{fileName.Replace("[[packagename]]",$"{DataHandler.GetSavedPackagedName()}")}");
            
            var assemblyDefinitionContent = DataHandler.GetAssemblyDefinitionContent(fileName);
            
@@ -329,7 +325,6 @@ namespace Studio23.SS2.UPMAssistant.Editor
                File.WriteAllText(filePath, assemblyDefinitionContent);
            }
            else  Debug.LogError("Assembly Definition is not created!");
-          
        }
 
        private static void CreateFolder(string filePath)
@@ -340,35 +335,5 @@ namespace Studio23.SS2.UPMAssistant.Editor
                Debug.Log("Folder created: " + filePath);
            }
        }
-      
-       
-       /*private void DeleteFolder(string folderPath)
-       {
-           // Check if the folder exists
-           if (Directory.Exists(folderPath))
-           {
-               // Delete all files in the folder
-               string[] files = Directory.GetFiles(folderPath);
-               foreach (string file in files)
-               {
-                   File.Delete(file);
-               }
-
-               // Delete all subdirectories and their contents
-               string[] subdirectories = Directory.GetDirectories(folderPath);
-               foreach (string subdirectory in subdirectories)
-               {
-                   DeleteFolder(subdirectory);
-               }
-
-               // Finally, delete the main folder
-               Directory.Delete(folderPath);
-               Debug.Log("Folder deleted: " + folderPath);
-           }
-           else
-           {
-               Debug.LogWarning("Folder not found: " + folderPath);
-           }
-       }*/
     }
 }

@@ -2,36 +2,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using System.Threading.Tasks;
 using Studio23.SS2.UPMAssistant.Editor.Data;
+using Newtonsoft.Json;
 
 namespace Studio23.SS2.UPMAssistant.Editor
 {
-    
- 
-public static class DataHandler
+    public static class DataHandler
 {
-   public static readonly string ROOT = "Assets/Packages/";
-    public static readonly string DATA_PATH = "Assets/UPMAssistant/Editor/Data";
-    public static readonly string LICENSE_URL = "licenseURLData.json";
-    public static readonly string PACKAGE_NAME = "packageNameData.json";
-   
+    public const string Root = "Assets/Packages/";
+    private const string DataPath = "Assets/UPMAssistant/Editor/Data";
+    private const string LicenseURL = "licenseURLData.json";
+    private const string PackageName = "packageNameData.json";
+
     public const string DefaultPackageName = "com.[companyname].[project].[packagename]";
     public const string DefaultLicenceURL = "https://api.github.com/licenses/mit";//"https://api.github.com/licenses/lgpl-2.1";
-    
-    public static readonly string PACKAGE_JSON = "package.json";
-    public static readonly string README_MD = "README.md";
-    public static readonly string CHANGELOG_MD = "CHANGELOG.md";
-    public static readonly string LICENSE_MD = "LICENSE.md";
-    public static readonly string THIRDPARTYNOTICES_MD = "ThirdPartyNotices.md";
-     
-    
+
+    public const string PackageJson = "package.json";
+    public const string ReadmeMD = "README.md";
+    public const string ChangelogMD = "CHANGELOG.md";
+    public const string LicenseMD = "LICENSE.md";
+    public const string ThirdPartyNoticesMD = "ThirdPartyNotices.md";
+
+    private const string ProjectName = "ss2";
+
     public static Dictionary<string, bool> FolderAndFilesList = new Dictionary<string, bool>
     {
-        {PACKAGE_JSON, false},
-        {README_MD, false},
-        {CHANGELOG_MD, false},
-        {LICENSE_MD, false},
-        {THIRDPARTYNOTICES_MD, false},
+        {PackageJson, false},
+        {ReadmeMD, false},
+        {ChangelogMD, false},
+        {LicenseMD, false},
+        {ThirdPartyNoticesMD, false},
         {"Editor", false},
         {$"Editor/[[packagename]].editor.asmdef", false},
         {"Runtime", false},
@@ -49,56 +50,56 @@ public static class DataHandler
     };
     public static void Initialized()
     {
-        if (!Directory.Exists(ROOT))
+        if (!Directory.Exists(Root))
         {
-            Directory.CreateDirectory(ROOT);
-            Debug.Log("Folder structure created: " + ROOT);
+            Directory.CreateDirectory(Root);
+            Debug.Log($"Folder structure created: {Root}");
         }
-        if (!Directory.Exists(DATA_PATH))
+        if (!Directory.Exists(DataPath))
         {
-            Directory.CreateDirectory(DATA_PATH);
-            Debug.Log("Folder structure created: " + DATA_PATH);
+            Directory.CreateDirectory(DataPath);
+            Debug.Log("Folder structure created: " + DataPath);
         } 
         
-        var licensePath = Path.Combine(DATA_PATH, LICENSE_URL);
+        var licensePath = Path.Combine(DataPath, LicenseURL);
         if (!File.Exists(licensePath))
         {
             LicenseURLData data = new LicenseURLData { LicenseURL = DefaultLicenceURL };
-            string jsonData = JsonUtility.ToJson(data);
-            File.WriteAllText(licensePath, jsonData);
+            string jsonData = JsonConvert.SerializeObject(data);
+            File.WriteAllTextAsync(licensePath, jsonData);
             // File.Create(licensePath).Close();
         }
         
-        var packageNamePath = Path.Combine(DATA_PATH, PACKAGE_NAME);
+        var packageNamePath = Path.Combine(DataPath, PackageName);
         if (!File.Exists(packageNamePath))
         {
             string updatedPackageName = DefaultPackageName;
             updatedPackageName = updatedPackageName.Replace("[companyname]", PlayerSettings.companyName);
-            updatedPackageName = updatedPackageName.Replace("[project]", "ss2"); //Application.productName
+            updatedPackageName = updatedPackageName.Replace("[project]", ProjectName); //Application.productName
             updatedPackageName = updatedPackageName.Replace("[packagename]", PlayerSettings.productName);
             updatedPackageName = updatedPackageName.Replace(" ", "").ToLower();
             PackageNameData data = new PackageNameData { PackageName = updatedPackageName };
-            string jsonData = JsonUtility.ToJson(data);
-            File.WriteAllText(packageNamePath, jsonData);
+            string jsonData = JsonConvert.SerializeObject(data);
+            File.WriteAllTextAsync(packageNamePath, jsonData);
         }
     }
     public static void SaveLicenseURLData(string licenseURL)
     {
-        var licensePath = Path.Combine(DATA_PATH, LICENSE_URL);
+        var licensePath = Path.Combine(DataPath, LicenseURL);
         
         LicenseURLData data = new LicenseURLData { LicenseURL = licenseURL };
-        string jsonData = JsonUtility.ToJson(data);
-        File.WriteAllText(licensePath, jsonData);
+        string jsonData = JsonConvert.SerializeObject(data);
+        File.WriteAllTextAsync(licensePath, jsonData);
     }
 
-    public static string LoadLicenseURLData()
+    public static string GetSavedLicenseURL()
     {
-        var licensePath = Path.Combine(DATA_PATH, LICENSE_URL);
+        var licensePath = Path.Combine(DataPath, LicenseURL);
         
         if (File.Exists(licensePath))
         {
-            string jsonData = File.ReadAllText(licensePath);
-            LicenseURLData data = JsonUtility.FromJson<LicenseURLData>(jsonData);
+            Task<string> jsonData = File.ReadAllTextAsync(licensePath);
+            LicenseURLData data = JsonConvert.DeserializeObject<LicenseURLData>(jsonData.Result);
             return data.LicenseURL;
         }
         else
@@ -109,22 +110,22 @@ public static class DataHandler
     }
     public static void SavePackageNameData(string packageName)
     {
-        var packageNamePath = Path.Combine(DATA_PATH, PACKAGE_NAME);
+        var packageNamePath = Path.Combine(DataPath, PackageName);
         
         PackageNameData data = new PackageNameData { PackageName = packageName };
-        string jsonData = JsonUtility.ToJson(data);
+        string jsonData = JsonConvert.SerializeObject(data);
         
-        File.WriteAllText(packageNamePath, jsonData);
+        File.WriteAllTextAsync(packageNamePath, jsonData);
     }
 
-    public static string LoadPackageNameData()
+    public static string GetSavedPackagedName()
     {
-        var packageNamePath = Path.Combine(DATA_PATH, PACKAGE_NAME);
+        var packageNamePath = Path.Combine(DataPath, PackageName);
         
         if (File.Exists(packageNamePath))
         {
-            string jsonData = File.ReadAllText(packageNamePath);
-            PackageNameData data = JsonUtility.FromJson<PackageNameData>(jsonData);
+            Task<string> jsonData = File.ReadAllTextAsync(packageNamePath);
+            PackageNameData data = JsonConvert.DeserializeObject<PackageNameData>(jsonData.Result);
             return data.PackageName;
         }
         else
@@ -136,7 +137,7 @@ public static class DataHandler
 
     public static void DeletedSaveData()
     {
-        var packageNamePath = ROOT + LoadPackageNameData();
+        var packageNamePath = Root + GetSavedPackagedName();
         if (Directory.Exists(packageNamePath))
         {
             Directory.Delete(packageNamePath, true);
@@ -164,7 +165,7 @@ public static class DataHandler
            {
                assemblyDefinitionContent = 
                    "{\n" +
-                   $"  \"name\": \"{LoadPackageNameData()}.editor\",\n" +
+                   $"  \"name\": \"{GetSavedPackagedName()}.editor\",\n" +
                    "  \"references\": [],\n" +
                    "  \"optionalUnityReferences\": [],\n" +
                    "  \"includePlatforms\": [\"Editor\"],\n" +
@@ -228,7 +229,7 @@ public static class DataHandler
            {
                assemblyDefinitionContent = 
                    "{\n" +
-                   $"  \"name\": \"{LoadPackageNameData()}\",\n" +
+                   $"  \"name\": \"{GetSavedPackagedName()}\",\n" +
                    "  \"references\": [],\n" +
                    "  \"optionalUnityReferences\": [],\n" +
                    "  \"includePlatforms\": [],\n" +
@@ -244,10 +245,7 @@ public static class DataHandler
            {
                Debug.LogError("Assembly Definition file not found!");
            }
-           
-           
            return assemblyDefinitionContent;
        }
-   
 }
 }
