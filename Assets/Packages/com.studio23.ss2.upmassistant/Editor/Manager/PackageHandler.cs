@@ -50,13 +50,13 @@ namespace Studio23.SS2.UPMAssistant.Editor
             string jsonString = JsonConvert.SerializeObject(newJsonData, Formatting.Indented);
             JObject jsonObject = JObject.Parse(jsonString);
 
-            if (jsonObject == null || !jsonObject.HasValues)
+            if (!jsonObject.HasValues)
             {
                 Debug.LogError($"Data not found!");
                 return;
             }
 
-            File.WriteAllText(FilePath, jsonString);
+            File.WriteAllTextAsync(FilePath, jsonString);
             Debug.Log($"File created with data: {FilePath}");
             AssetDatabase.Refresh();
         }
