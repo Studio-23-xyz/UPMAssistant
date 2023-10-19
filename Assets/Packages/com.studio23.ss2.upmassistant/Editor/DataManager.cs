@@ -75,7 +75,7 @@ public static class DataManager
         {
             string updatedPackageName = DefaultPackageName;
             updatedPackageName = updatedPackageName.Replace("[companyname]", PlayerSettings.companyName);
-            updatedPackageName = updatedPackageName.Replace("[project]", Application.productName);
+            updatedPackageName = updatedPackageName.Replace("[project]", "ss2"); //Application.productName
             updatedPackageName = updatedPackageName.Replace("[packagename]", PlayerSettings.productName);
             updatedPackageName = updatedPackageName.Replace(" ", "").ToLower();
             PackageNameData data = new PackageNameData { PackageName = updatedPackageName };

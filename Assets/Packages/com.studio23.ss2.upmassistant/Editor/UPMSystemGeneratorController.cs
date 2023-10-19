@@ -145,9 +145,6 @@ namespace Studio23.SS2.UPMAssistant.Editor
             #endregion
             
             GUILayout.Label("Enter Package Name:", EditorStyles.boldLabel);
-           
-
-             
             _packageName = EditorGUILayout.TextField("Assets/Packages/", _packageName, GUILayout.Width(position.width - 20));
             
          
@@ -162,29 +159,29 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 {
                     if (isShowNestedAssemblyDefOption)
                     {
-                        
                         var entryKey = $"{entry.Key.Replace("[[packagename]]", $"{_packageName}")}";
                         DataManager.FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entryKey, entry.Value, GUILayout.Width(position.width - 20));
                     }
                 }
                 else  DataManager.FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entry.Key, entry.Value);
-                
-                
-                
-                
+
+
+
+                #region Configure
+
                 if (entry.Key == DataManager.PACKAGE_JSON)
                 {
                     if (entry.Value)
                     { 
-                       var isThisFileAlreadyCreated = File.Exists(DataManager.ROOT + _packageName + "/" + entry.Key);
+                        var isThisFileAlreadyCreated = File.Exists(DataManager.ROOT + _packageName + "/" + entry.Key);
 
-                       if (isThisFileAlreadyCreated)
-                       {
-                           if (GUILayout.Button("Configure"))
-                           {
-                               PackageJsonController.CreateWizard();
-                           }
-                       }
+                        if (isThisFileAlreadyCreated)
+                        {
+                            if (GUILayout.Button("Configure"))
+                            {
+                                PackageJsonController.CreateWizard();
+                            }
+                        }
                         
                     }
                       
@@ -228,16 +225,24 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 else  if (entry.Key == "Runtime") isShowNestedAssemblyDefOption = entry.Value; 
                 else  if (entry.Key == "Tests/EditMode") isShowNestedAssemblyDefOption = entry.Value; 
                 else  if (entry.Key == "Tests/PlayMode") isShowNestedAssemblyDefOption = entry.Value; 
+
+                #endregion
                     
             }
+
+            #region Notification
 
             if (!string.IsNullOrEmpty(_warningMessage) && Time.realtimeSinceStartup - _warningStartTime < WarningDuration)
             {
                 EditorGUILayout.HelpBox(_warningMessage, _messageType);
             }
+
+            #endregion
             
             GUILayout.Space(10);
-           
+
+            #region SubmitOption
+
             GUI.backgroundColor = Color.green;
             if (GUILayout.Button("Generate UPM System", GUILayout.Height(40)))
             {
@@ -249,6 +254,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 DataManager.SavePackageNameData(_packageName);
                 CreateFolderStructure();
             }
+
+            #endregion
              
             GUI.backgroundColor = Color.white; // Reset the background color
         }
@@ -270,18 +277,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
                Debug.Log("Folder structure created: " + packageDirectory);
            }
            
-           /*string rootPath = _root + packageName;
-           if (!AssetDatabase.IsValidFolder(rootPath))
-           {
-               AssetDatabase.CreateFolder("Assets/Packages", packageName);
-               Debug.Log("Root folder created: " + rootPath);
-           }
-           else
-           {
-               Debug.Log("Root folder already exists: " + rootPath);
-           }*/
 
-           foreach (var entry in DataManager. FolderAndFilesList)
+           foreach (var entry in DataManager.FolderAndFilesList)
            {
                if (entry.Value)
                {
@@ -300,29 +297,14 @@ namespace Studio23.SS2.UPMAssistant.Editor
            ShowNotification($"Folder structure created successfully.");
        }
 
-      
-
-       private static void CreateFolder(string path)
+       private void CreateFile(string packageDirectory, string fileName)
        {
-           if (!AssetDatabase.IsValidFolder(path))
-           {
-               AssetDatabase.CreateFolder(Path.GetDirectoryName(path), Path.GetFileName(path));
-               Debug.Log("Folder created: " + path);
-           }
-           else
-           {
-               Debug.Log("Folder already exists: " + path);
-           }
-       }
-       private void CreateFile(string path, string fileName)
-       {
-           
            string extension = fileName.Split(".").LastOrDefault();
            
-           string filePath = Path.Combine(path, fileName);
+           string filePath = Path.Combine(packageDirectory, fileName);
            if (!File.Exists(filePath) && extension == "asmdef")
            {
-               CreateFileAsmdef( path,  fileName);
+               CreateFileAsmdef(packageDirectory, fileName);
            }
            else if (!File.Exists(filePath))
            {
@@ -334,17 +316,36 @@ namespace Studio23.SS2.UPMAssistant.Editor
                Debug.Log("File already exists: " + filePath);
            }
        }
-       void CreateFileAsmdef(string path, string fileName)
+       void CreateFileAsmdef(string packageDirectory, string fileName)
        {
-           string filePath = Path.Combine(path,$"{fileName.Replace("[[packagename]]",$"{_packageName}")}");
-           // Define the content of the assembly definition file
-           string assemblyDefinitionContent = DataManager.GetAssemblyDefinitionContent(fileName);
-            
-          // if(string.IsNullOrEmpty(assemblyDefinitionContent)) 
+           string filePath = Path.Combine(packageDirectory, $"{fileName.Replace("[[packagename]]",$"{DataManager.LoadPackageNameData()}")}");
+           
+           var assemblyDefinitionContent = DataManager.GetAssemblyDefinitionContent(fileName);
+           
+           string directory = Path.GetDirectoryName(filePath); //string fileName = Path.GetFileName(filePath);
+           
+           if (!Directory.Exists(directory))
+           {
+               if (directory != null) Directory.CreateDirectory(directory);
+           }
+           
+           if (assemblyDefinitionContent != "")
+           {
                File.WriteAllText(filePath, assemblyDefinitionContent);
-           //else  Debug.LogError("Assembly Definition null!");
+           }
+           else  Debug.LogError("Assembly Definition is not created!");
           
        }
+
+       private static void CreateFolder(string filePath)
+       {
+           if (!AssetDatabase.IsValidFolder(filePath))
+           {
+               AssetDatabase.CreateFolder(Path.GetDirectoryName(filePath), Path.GetFileName(filePath));
+               Debug.Log("Folder created: " + filePath);
+           }
+       }
+      
        
        /*private void DeleteFolder(string folderPath)
        {
