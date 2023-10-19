@@ -20,7 +20,7 @@ namespace Studio23.SS2.UPMAssistant.Editor.Data
                 if (_instance == null)
                 {
                     _instance = Resources.Load<SharedGUIContent>("SharedGUIContent");
-                    GitHubLicenseAPIController.FetchOnlineGitLicenses();
+                    APIHandler.FetchOnlineGitLicenses();
                     if (_instance == null) Debug.LogError("SharedGUIContent asset not found in Resources folder!");
                 }
 
@@ -32,28 +32,28 @@ namespace Studio23.SS2.UPMAssistant.Editor.Data
           
             #region Licenses
 
-            if (GitHubLicenseAPIController.gitHubLicense != null && GitHubLicenseAPIController.gitHubLicense.Count > 0)
+            if (APIHandler.gitHubLicense != null && APIHandler.gitHubLicense.Count > 0)
             {
                 List<string> licenseNames = new List<string>();
-                foreach (var license in GitHubLicenseAPIController.gitHubLicense)  licenseNames.Add(license.name);
+                foreach (var license in APIHandler.gitHubLicense)  licenseNames.Add(license.name);
 
-                GitHubLicenseAPIController.SelectedLicenceIndex = EditorGUILayout.Popup("Select License", GitHubLicenseAPIController.SelectedLicenceIndex, licenseNames.ToArray());
+                APIHandler.SelectedLicenceIndex = EditorGUILayout.Popup("Select License", APIHandler.SelectedLicenceIndex, licenseNames.ToArray());
                 
                 GUILayout.BeginHorizontal();
-                EditorGUI.BeginDisabledGroup(GitHubLicenseAPIController.IsDownloading);
+                EditorGUI.BeginDisabledGroup(APIHandler.IsDownloading);
                 if (GUILayout.Button("Configure"))
                 {
                     var licenseFilePath =
-                        Path.Combine(DataManager.ROOT + DataManager.LoadPackageNameData(), DataManager.LICENSE_MD);
+                        Path.Combine(DataHandler.ROOT + DataHandler.LoadPackageNameData(), DataHandler.LICENSE_MD);
                     if (File.Exists(licenseFilePath))
-                        UPMFileEditorWindowController.ShowWindow(licenseFilePath);
+                        FileEditorWindowController.ShowWindow(licenseFilePath);
                     else  Debug.LogError("License file not found!");
                 }
                
                 if(GUILayout.Button("Download"))
                 {
-                    DataManager.SaveLicenseURLData(GitHubLicenseAPIController.GetLicenseURL());
-                    GitHubLicenseAPIController.DownloadLicence();
+                    DataHandler.SaveLicenseURLData(APIHandler.GetLicenseURL());
+                    APIHandler.DownloadLicence();
                     
                 }
                 EditorGUI.EndDisabledGroup();

@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using Studio23.SS2.UPMAssistant.Editor.Data;
 using UnityEditor;
-using UnityEditor.Compilation;
-using UnityEditorInternal;
 using UnityEngine;
 
 namespace Studio23.SS2.UPMAssistant.Editor
 {
-    public class UPMSystemGeneratorController: EditorWindow
+    public class UPMSystemWindowController: EditorWindow
     {
        
         // private static string _root;
@@ -25,7 +21,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
         [MenuItem("Studio-23/UPM Assistant/Generator", priority = 0)]
         public static void ShowWindow()
         {
-            UPMSystemGeneratorController window =GetWindow<UPMSystemGeneratorController>("PackageJsonController Window");
+            UPMSystemWindowController window =GetWindow<UPMSystemWindowController>("PackageJsonWindowController Window");
             window.minSize = new Vector2(600, 600); 
             window.titleContent = new GUIContent("UPM System Generator Window");
              
@@ -38,14 +34,14 @@ namespace Studio23.SS2.UPMAssistant.Editor
         private void Refresh()
         {
             AssetDatabase.Refresh();
-            DataManager.Initialized();
+            DataHandler.Initialized();
             LoadPackageName();
             LoadExistenceFileFolderStructure();
            
         }
         private static void RestartWindow()
         {
-            UPMSystemGeneratorController window = GetWindow<UPMSystemGeneratorController>();
+            UPMSystemWindowController window = GetWindow<UPMSystemWindowController>();
             if (window != null)
             {
                 window.Close();
@@ -59,24 +55,23 @@ namespace Studio23.SS2.UPMAssistant.Editor
          private void LoadPackageName()
          {
             _packageName = "";
-            if (string.IsNullOrEmpty(_packageName)) _packageName = DataManager.LoadPackageNameData(); 
+            if (string.IsNullOrEmpty(_packageName)) _packageName = DataHandler.LoadPackageNameData(); 
         }
         private void LoadExistenceFileFolderStructure()
         {
             // Initialize the dictionary with file/folder existence check
-            foreach (var entry in DataManager.FolderAndFilesList.ToList())
+            foreach (var entry in DataHandler.FolderAndFilesList.ToList())
             {
-               // Debug.Log(_root + _packageName + "/" + entry.Key);
                 if (entry.Key.Contains("."))
                 {
                     // For files, check if the file exists
-                    // var entryKey = $"{entry.Key.Replace("[[packagename]]", $"{_packageName}")}";
-                    DataManager.FolderAndFilesList[entry.Key] = File.Exists(DataManager.ROOT + _packageName + "/" + entry.Key);
+                    var entryKey = $"{entry.Key.Replace("[[packagename]]", $"{_packageName}")}";
+                    DataHandler.FolderAndFilesList[entry.Key] = File.Exists(DataHandler.ROOT + _packageName + "/" + entryKey);
                 }
                 else
                 {
                     // For folders, check if the folder exists
-                    DataManager.FolderAndFilesList[entry.Key] = AssetDatabase.IsValidFolder(DataManager.ROOT + _packageName + "/" + entry.Key);
+                    DataHandler.FolderAndFilesList[entry.Key] = AssetDatabase.IsValidFolder(DataHandler.ROOT + _packageName + "/" + entry.Key);
                 }
             }
         }
@@ -90,28 +85,28 @@ namespace Studio23.SS2.UPMAssistant.Editor
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Check All", GUILayout.Width(position.width / 4 - 5)))
             {
-                foreach (var entry in DataManager.FolderAndFilesList.ToList())
+                foreach (var entry in DataHandler.FolderAndFilesList.ToList())
                 {
-                    DataManager.FolderAndFilesList[entry.Key] = true;
+                    DataHandler.FolderAndFilesList[entry.Key] = true;
                 }
             }
             if (GUILayout.Button("Uncheck All", GUILayout.Width(position.width / 4 - 5)))
             {
-                foreach (var entry in DataManager.FolderAndFilesList.ToList())
+                foreach (var entry in DataHandler.FolderAndFilesList.ToList())
                 {
-                    DataManager.FolderAndFilesList[entry.Key] = false;
+                    DataHandler.FolderAndFilesList[entry.Key] = false;
                 }
             }
             if (GUILayout.Button("Refresh", GUILayout.Width(position.width / 4 - 5)))
             {
                 if(_packageName != "") 
-                    DataManager.SavePackageNameData(_packageName);
+                    DataHandler.SavePackageNameData(_packageName);
                 Refresh();
             }
             if (GUILayout.Button("Delete System", GUILayout.Width(position.width / 4 - 5)))
             {
               
-                if (DataManager.LoadPackageNameData() != null)
+                if (DataHandler.LoadPackageNameData() != null)
                 {
                     bool userConfirmed = EditorUtility.DisplayDialog("Delete Folder",
                         "Are you sure you want to delete the folder and its contents?",
@@ -121,7 +116,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
                     {
                         //DeleteFolder(Root + packageName);
                         //PlayerPrefs.DeleteKey("packageName");
-                        DataManager.DeletedSaveData();
+                        DataHandler.DeletedSaveData();
                         RestartWindow();
                         ShowNotification("Folder deleted successfully.");
                     }
@@ -150,7 +145,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
          
 
             bool isShowNestedAssemblyDefOption = false;
-            foreach (var entry in DataManager.FolderAndFilesList.ToList())
+            foreach (var entry in DataHandler.FolderAndFilesList.ToList())
             {
                
                 string extension = entry.Key.Split(".").LastOrDefault();
@@ -160,55 +155,55 @@ namespace Studio23.SS2.UPMAssistant.Editor
                     if (isShowNestedAssemblyDefOption)
                     {
                         var entryKey = $"{entry.Key.Replace("[[packagename]]", $"{_packageName}")}";
-                        DataManager.FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entryKey, entry.Value, GUILayout.Width(position.width - 20));
+                        DataHandler.FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entryKey, entry.Value, GUILayout.Width(position.width - 20));
                     }
                 }
-                else  DataManager.FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entry.Key, entry.Value);
+                else  DataHandler.FolderAndFilesList[entry.Key] = EditorGUILayout.ToggleLeft(entry.Key, entry.Value);
 
 
 
                 #region Configure
 
-                if (entry.Key == DataManager.PACKAGE_JSON)
+                if (entry.Key == DataHandler.PACKAGE_JSON)
                 {
                     if (entry.Value)
                     { 
-                        var isThisFileAlreadyCreated = File.Exists(DataManager.ROOT + _packageName + "/" + entry.Key);
+                        var isThisFileAlreadyCreated = File.Exists(DataHandler.ROOT + _packageName + "/" + entry.Key);
 
                         if (isThisFileAlreadyCreated)
                         {
                             if (GUILayout.Button("Configure"))
                             {
-                                PackageJsonController.CreateWizard();
+                                PackageJsonWindowController.CreateWizard();
                             }
                         }
                         
                     }
                       
                 } 
-                else if (entry.Key == DataManager.README_MD || entry.Key == DataManager.CHANGELOG_MD || entry.Key == DataManager.THIRDPARTYNOTICES_MD)
+                else if (entry.Key == DataHandler.README_MD || entry.Key == DataHandler.CHANGELOG_MD || entry.Key == DataHandler.THIRDPARTYNOTICES_MD)
                 {
                     if (entry.Value)
                     { 
                         var fileExist =
-                            Path.Combine(DataManager.ROOT + DataManager.LoadPackageNameData(), entry.Key);
+                            Path.Combine(DataHandler.ROOT + DataHandler.LoadPackageNameData(), entry.Key);
 
                         if (File.Exists(fileExist))
                         {
                             if (GUILayout.Button("Configure"))
                             {
-                                UPMFileEditorWindowController.ShowWindow(fileExist);
+                                FileEditorWindowController.ShowWindow(fileExist);
                             }
                         }
                            
                     }
                       
                 } 
-                else if (entry.Key == DataManager.LICENSE_MD)
+                else if (entry.Key == DataHandler.LICENSE_MD)
                 {
                     if (entry.Value)
                     { 
-                        var isThisFileAlreadyCreated = File.Exists(DataManager.ROOT + _packageName + "/" + entry.Key);
+                        var isThisFileAlreadyCreated = File.Exists(DataHandler.ROOT + _packageName + "/" + entry.Key);
 
                         if (isThisFileAlreadyCreated)
                         {
@@ -251,7 +246,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
                     ShowNotification("Please enter a package name", MessageType.Error);
                     return;
                 }
-                DataManager.SavePackageNameData(_packageName);
+                DataHandler.SavePackageNameData(_packageName);
                 CreateFolderStructure();
             }
 
@@ -270,7 +265,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
        public void CreateFolderStructure()
        {
            
-           var packageDirectory = DataManager.ROOT + DataManager.LoadPackageNameData();
+           var packageDirectory = DataHandler.ROOT + DataHandler.LoadPackageNameData();
            if (!Directory.Exists(packageDirectory))
            {
                Directory.CreateDirectory(packageDirectory);
@@ -278,7 +273,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
            }
            
 
-           foreach (var entry in DataManager.FolderAndFilesList)
+           foreach (var entry in DataHandler.FolderAndFilesList)
            {
                if (entry.Value)
                {
@@ -318,9 +313,9 @@ namespace Studio23.SS2.UPMAssistant.Editor
        }
        void CreateFileAsmdef(string packageDirectory, string fileName)
        {
-           string filePath = Path.Combine(packageDirectory, $"{fileName.Replace("[[packagename]]",$"{DataManager.LoadPackageNameData()}")}");
+           string filePath = Path.Combine(packageDirectory, $"{fileName.Replace("[[packagename]]",$"{DataHandler.LoadPackageNameData()}")}");
            
-           var assemblyDefinitionContent = DataManager.GetAssemblyDefinitionContent(fileName);
+           var assemblyDefinitionContent = DataHandler.GetAssemblyDefinitionContent(fileName);
            
            string directory = Path.GetDirectoryName(filePath); //string fileName = Path.GetFileName(filePath);
            

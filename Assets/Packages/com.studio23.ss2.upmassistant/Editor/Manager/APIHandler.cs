@@ -9,7 +9,7 @@ using UnityEditor;
 
 namespace Studio23.SS2.UPMAssistant.Editor
 { 
-    public static class GitHubLicenseAPIController  
+    public static class APIHandler  
 {
     
     private const string APIURL = "https://api.github.com/licenses";
@@ -21,7 +21,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
     
     public static void FetchOnlineGitLicenses()
     {
-        _selectedLicenceURL = DataManager.LoadLicenseURLData();
+        _selectedLicenceURL = DataHandler.LoadLicenseURLData();
         UnityWebRequest www = UnityWebRequest.Get(APIURL);
         www.SendWebRequest().completed += FetchLicensesCallback;
     }
@@ -47,7 +47,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
     public static void DownloadLicence()
     {
         IsDownloading = true;
-        UnityWebRequest www = UnityWebRequest.Get(DataManager.LoadLicenseURLData());
+        UnityWebRequest www = UnityWebRequest.Get(DataHandler.LoadLicenseURLData());
             www.SendWebRequest().completed += FetchLicensesCallback2;
     }
     private static void FetchLicensesCallback2(AsyncOperation operation)
@@ -63,7 +63,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
             string jsonResponse = www.downloadHandler.text;
             var license = JsonConvert.DeserializeObject<License>(jsonResponse);
             var licenseFilePath =
-                Path.Combine(DataManager.ROOT + DataManager.LoadPackageNameData(), DataManager.LICENSE_MD);
+                Path.Combine(DataHandler.ROOT + DataHandler.LoadPackageNameData(), DataHandler.LICENSE_MD);
             if (!File.Exists(licenseFilePath))
             {
                 Debug.LogError("License file not found!");
@@ -86,7 +86,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
     }
     public static string GetLicenseURL()
     {
-        var currentSelectedLicence = DataManager.DefaultLicenceURL;
+        var currentSelectedLicence = DataHandler.DefaultLicenceURL;
         if (gitHubLicense is {Count: > 0})
         {
             currentSelectedLicence = gitHubLicense[SelectedLicenceIndex].url;

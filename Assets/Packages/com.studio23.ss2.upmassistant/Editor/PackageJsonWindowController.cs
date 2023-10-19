@@ -1,16 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Studio23.SS2.UPMAssistant.Editor.Data;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Serialization;
+
 
 namespace Studio23.SS2.UPMAssistant.Editor
 {
-    public class PackageJsonController : EditorWindow
+    public class PackageJsonWindowController : EditorWindow
     {
         private PackageJsonData jsonData; 
         
@@ -20,7 +18,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
         private MessageType messageType = MessageType.Info;
         public static void CreateWizard()
         {
-            PackageJsonController window = GetWindow<PackageJsonController>(true, "Generate package.json");
+            PackageJsonWindowController window = GetWindow<PackageJsonWindowController>(true, "Generate package.json");
             window.minSize = new Vector2(820, 700); 
             window.Show();
         }
@@ -31,18 +29,18 @@ namespace Studio23.SS2.UPMAssistant.Editor
 
         private void LoadPackageJson()
         {
-            PackageJson. FilePath = Path.Combine(DataManager.ROOT + DataManager.LoadPackageNameData(), DataManager.PACKAGE_JSON);
-            jsonData = PackageJson.CheckUpdateOnDisabledProperties(PackageJson.LoadData());
+            PackageHandler. FilePath = Path.Combine(DataHandler.ROOT + DataHandler.LoadPackageNameData(), DataHandler.PACKAGE_JSON);
+            jsonData = PackageHandler.CheckUpdateOnDisabledProperties(PackageHandler.LoadData());
         }
     
         private void OnGUI()
         {
            
-            GUILayout.Label($"{DataManager.PACKAGE_JSON} Settings", EditorStyles.boldLabel);
+            GUILayout.Label($"{DataHandler.PACKAGE_JSON} Settings", EditorStyles.boldLabel);
             
 
             EditorGUI.BeginDisabledGroup(true); // Begin disabled group
-            EditorGUILayout.TextField("File Location:", PackageJson.FilePath);
+            EditorGUILayout.TextField("File Location:", PackageHandler.FilePath);
             GUILayout.Space(10); 
             jsonData.name = EditorGUILayout.TextField("Name:", jsonData.name);
             
@@ -75,7 +73,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
            
             #region Licenses
             EditorGUI.BeginDisabledGroup(true);
-            jsonData.licensesUrl =  EditorGUILayout.TextField("License URL: ", DataManager.LoadLicenseURLData());
+            jsonData.licensesUrl =  EditorGUILayout.TextField("License URL: ", DataHandler.LoadLicenseURLData());
                    //EditorGUILayout.TextField("Licenses URL:", jsonData.licensesUrl);
             EditorGUI.EndDisabledGroup();
             #endregion
@@ -182,7 +180,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
             GUI.backgroundColor = Color.green;
             if (GUILayout.Button("Generate", GUILayout.Height(35)))
             {
-                PackageJson.SaveData(jsonData);
+                PackageHandler.SaveData(jsonData);
             }
             GUI.backgroundColor = Color.white; 
         }

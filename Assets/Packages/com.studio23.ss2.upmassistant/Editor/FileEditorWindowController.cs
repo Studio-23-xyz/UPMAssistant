@@ -2,10 +2,9 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 
-
 namespace Studio23.SS2.UPMAssistant.Editor
 {
-    public class UPMFileEditorWindowController : EditorWindow
+    public class FileEditorWindowController : EditorWindow
     {
         private static string markupText = ""; 
         private static string filePath = "";  
@@ -15,7 +14,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
             if (!string.IsNullOrEmpty(path))
             {
                 filePath = path;
-                var window =GetWindow<UPMFileEditorWindowController>("UPM Editor Window");
+                var window =GetWindow<FileEditorWindowController>("UPM Editor Window");
                 window.minSize = new Vector2(600, 600); 
                 markupText = File.ReadAllText(filePath);
             }

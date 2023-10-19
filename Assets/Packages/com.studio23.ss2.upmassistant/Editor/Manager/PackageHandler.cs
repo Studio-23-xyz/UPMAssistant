@@ -3,13 +3,14 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Studio23.SS2.UPMAssistant.Editor.Data;
 using UnityEditor;
 using UnityEngine;
 
 namespace Studio23.SS2.UPMAssistant.Editor
 {
     
-    public static class PackageJson
+    public static class PackageHandler
     {
         public static string FilePath;
         public static PackageJsonData LoadData()
@@ -64,10 +65,10 @@ namespace Studio23.SS2.UPMAssistant.Editor
         {
             var haveUpdate = false;
 
-            haveUpdate |= UpdateField(jsonData, "name", DataManager.LoadPackageNameData());
+            haveUpdate |= UpdateField(jsonData, "name", DataHandler.LoadPackageNameData());
             haveUpdate |= UpdateField(jsonData, "version", Application.version);
             haveUpdate |= UpdateField(jsonData, "displayName", Application.productName);
-            haveUpdate |= UpdateField(jsonData, "licensesUrl", DataManager.LoadLicenseURLData());
+            haveUpdate |= UpdateField(jsonData, "licensesUrl", DataHandler.LoadLicenseURLData());
             haveUpdate |= UpdateField(jsonData.author, "name", Application.companyName);
 
             return haveUpdate;
@@ -87,31 +88,20 @@ namespace Studio23.SS2.UPMAssistant.Editor
 
             return false;
         }
-
-        /*private static bool UpdateField<T>(PackageJsonData jsonData, string fieldName, T newValue)
-        {
-            var currentValue = jsonData.GetType().GetField(fieldName)?.GetValue(jsonData);
-            if (!EqualityComparer<T>.Default.Equals((T)currentValue, newValue))
-            {
-                jsonData.GetType().GetField(fieldName)?.SetValue(jsonData, newValue);
-                return true;
-            }
-
-            return false;
-        }*/
+        
         private static PackageJsonData LoadDefaultPackageJsonData()
         {
             PackageJsonData data = new PackageJsonData();
-            data.name = DataManager.LoadPackageNameData();
+            data.name = DataHandler.LoadPackageNameData();
             data.version = Application.version; // 1.0.1
             data.displayName = Application.productName; // UPM Assistant
             data.description = "The UPM Assistant is an editor extension tool designed to simplify the process of creating folder structures required for Unity packages that are published on  openupm.com";
             string[] unityVersion = Application.unityVersion.Split(".");
             data.unity = unityVersion[0] +"."+ unityVersion[1];//"2022.3";
             data.unityRelease = unityVersion[2]; //"9f1";
-            data.documentationUrl = $"https://openupm.com/packages/{DataManager.LoadPackageNameData()}";
-            data.changelogUrl = $"https://openupm.com/packages/{DataManager.LoadPackageNameData()}";
-            data.licensesUrl = $"{DataManager.LoadLicenseURLData()}";//"https://api.github.com/licenses/mit";
+            data.documentationUrl = $"https://openupm.com/packages/{DataHandler.LoadPackageNameData()}";
+            data.changelogUrl = $"https://openupm.com/packages/{DataHandler.LoadPackageNameData()}";
+            data.licensesUrl = $"{DataHandler.LoadLicenseURLData()}";//"https://api.github.com/licenses/mit";
 
             ScopedRegistry scopedRegistry = new ScopedRegistry()
             {
