@@ -1,8 +1,8 @@
 {
-  "name": "com.studio23.upmassistant.test",
+  "name": "com.studio233.ss2.testproject.editor",
   "references": [],
   "optionalUnityReferences": [],
-  "includePlatforms": [],
+  "includePlatforms": ["Editor"],
   "excludePlatforms": [],
   "allowUnsafeCode": false,
   "overrideReferences": false,

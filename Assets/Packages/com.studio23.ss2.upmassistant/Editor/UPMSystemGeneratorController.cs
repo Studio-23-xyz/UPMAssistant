@@ -70,8 +70,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 if (entry.Key.Contains("."))
                 {
                     // For files, check if the file exists
-                    var entryKey = $"{entry.Key.Replace("[[packagename]]", $"{_packageName}")}";
-                    DataManager.FolderAndFilesList[entry.Key] = File.Exists(DataManager.ROOT + _packageName + "/" + entryKey);
+                    // var entryKey = $"{entry.Key.Replace("[[packagename]]", $"{_packageName}")}";
+                    DataManager.FolderAndFilesList[entry.Key] = File.Exists(DataManager.ROOT + _packageName + "/" + entry.Key);
                 }
                 else
                 {
@@ -339,8 +339,10 @@ namespace Studio23.SS2.UPMAssistant.Editor
            string filePath = Path.Combine(path,$"{fileName.Replace("[[packagename]]",$"{_packageName}")}");
            // Define the content of the assembly definition file
            string assemblyDefinitionContent = DataManager.GetAssemblyDefinitionContent(fileName);
-           //if(string.IsNullOrEmpty(assemblyDefinitionContent)) 
+            
+          // if(string.IsNullOrEmpty(assemblyDefinitionContent)) 
                File.WriteAllText(filePath, assemblyDefinitionContent);
+           //else  Debug.LogError("Assembly Definition null!");
           
        }
        

@@ -37,6 +37,8 @@ public static class DataManager
         {$"Editor/[[packagename]].editor.asmdef", false},
         {"Runtime", false},
         {$"Runtime/[[packagename]].asmdef", false},
+        {"Runtime/Data", false},
+        {"Runtime/Core", false},
         {"Tests", false},
         {"Tests/EditMode", false},
         {$"Tests/EditMode/editmode.tests.asmdef", false},
@@ -238,6 +240,10 @@ public static class DataManager
                    "  \"autoReferenced\": true,\n" +
                    "  \"defineConstraints\": []\n" +
                    "}";
+           }
+           else
+           {
+               Debug.LogError("Assembly Definition file not found!");
            }
            
            
