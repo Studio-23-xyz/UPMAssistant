@@ -72,7 +72,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 string jsonResponse = www.downloadHandler.text;
                 var license = JsonConvert.DeserializeObject<License>(jsonResponse);
                 var licenseFilePath =
-                    Path.Combine(DataHandler.Root + DataHandler.GetSavedPackagedName(), DataHandler.LicenseMD);
+                    Path.Combine(DataHandler.Root, DataHandler.GetSavedPackagedName(), DataHandler.LicenseMD);
                 if (!File.Exists(licenseFilePath))
                 {
                     Debug.LogError("License file not found!");

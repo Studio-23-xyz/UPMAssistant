@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-
 namespace Studio23.SS2.UPMAssistant.Editor.Data
 {
-    
     public class PackageJsonData 
     {
         public PackageJsonData()
@@ -14,7 +12,6 @@ namespace Studio23.SS2.UPMAssistant.Editor.Data
             Keywords = new List<string>();
             Author = new Author();
         }
-
         [JsonProperty("name")] public string Name;
         [JsonProperty("version")] public string Version;
         [JsonProperty("displayName")] public string DisplayName;
@@ -30,7 +27,6 @@ namespace Studio23.SS2.UPMAssistant.Editor.Data
         [JsonProperty("author")] public Author Author;
 
     }
-
     public class Author
     {
         [JsonProperty("name")] 

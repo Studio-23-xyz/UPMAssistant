@@ -65,12 +65,14 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 {
                     // For files, check if the file exists
                     var entryKey = $"{entry.Key.Replace("[[packagename]]", $"{_packageName}")}";
-                    DataHandler.FolderAndFilesList[entry.Key] = File.Exists(DataHandler.Root + _packageName + "/" + entryKey);
+                    var path = Path.Combine(DataHandler.Root, _packageName, entryKey);
+                    DataHandler.FolderAndFilesList[entry.Key] = File.Exists(path);
                 }
                 else
                 {
                     // For folders, check if the folder exists
-                    DataHandler.FolderAndFilesList[entry.Key] = AssetDatabase.IsValidFolder(DataHandler.Root + _packageName + "/" + entry.Key);
+                    var path = Path.Combine(DataHandler.Root, _packageName, entry.Key);
+                    DataHandler.FolderAndFilesList[entry.Key] = AssetDatabase.IsValidFolder(path);
                 }
             }
         }
@@ -167,7 +169,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 {
                     if (entry.Value)
                     { 
-                        var isThisFileAlreadyCreated = File.Exists(DataHandler.Root + _packageName + "/" + entry.Key);
+                        var filePath = Path.Combine(DataHandler.Root , _packageName, entry.Key);
+                        var isThisFileAlreadyCreated = File.Exists(filePath);
 
                         if (isThisFileAlreadyCreated)
                         {
@@ -185,8 +188,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
                     if (entry.Value)
                     { 
                         var fileExist =
-                            Path.Combine(DataHandler.Root + DataHandler.GetSavedPackagedName(), entry.Key);
-
+                            Path.Combine(DataHandler.Root, _packageName, entry.Key);
+                            
                         if (File.Exists(fileExist))
                         {
                             if (GUILayout.Button("Configure"))
@@ -202,7 +205,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 {
                     if (entry.Value)
                     { 
-                        var isThisFileAlreadyCreated = File.Exists(DataHandler.Root + _packageName + "/" + entry.Key);
+                        var filePath = Path.Combine(DataHandler.Root, _packageName, entry.Key);
+                        var isThisFileAlreadyCreated = File.Exists(filePath);
 
                         if (isThisFileAlreadyCreated)
                         {
@@ -264,7 +268,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
 
         private void CreateFolderStructure()
        {
-           var packageDirectory = DataHandler.Root + DataHandler.GetSavedPackagedName();
+           var packageDirectory = Path.Combine(DataHandler.Root, DataHandler.GetSavedPackagedName());
            if (!Directory.Exists(packageDirectory))
            {
                Directory.CreateDirectory(packageDirectory);

@@ -10,7 +10,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
 {
     public static class DataHandler
 {
-    public const string Root = "Assets/Packages/";
+    public const string Root = "Assets/Packages";
     private const string DataPath = "Assets/UPMAssistant/Editor/Data";
     private const string LicenseURL = "licenseURLData.json";
     private const string PackageName = "packageNameData.json";
@@ -137,7 +137,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
 
     public static void DeletedSaveData()
     {
-        var packageNamePath = Root + GetSavedPackagedName();
+        var packageNamePath = Path.Combine(Root, GetSavedPackagedName());
         if (Directory.Exists(packageNamePath))
         {
             Directory.Delete(packageNamePath, true);

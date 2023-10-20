@@ -31,7 +31,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
         private void LoadPackageJson()
         {
             string packageNameData = DataHandler.GetSavedPackagedName();
-            string filePath = Path.Combine(DataHandler.Root + packageNameData, DataHandler.PackageJson);
+            string filePath = Path.Combine(DataHandler.Root, packageNameData, DataHandler.PackageJson);
             PackageHandler.FilePath = filePath;
             _jsonData = PackageHandler.LoadData();
             _jsonData = PackageHandler.CheckUpdateOnDisabledProperties(_jsonData);
@@ -116,26 +116,24 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 {
                     itemsToUpdate.Add(new KeyValuePair<string, string>(dependency.Key, dependencyVersion));
                 }
-
                 foreach (var item in itemsToUpdate)
                 {
                     _jsonData.Dependencies.Remove(item.Key);
-                    _jsonData.Dependencies.Add(item.Key, item.Value);
+                    _jsonData.Dependencies.Add(dependencyName, item.Value);
                 }
                 
                 if (GUILayout.Button("Remove", GUILayout.Width(80)))
                 {
-                    // Remove the dictionary entry based on the key
                     _jsonData.Dependencies.Remove(dependency.Key);
-                    break; // Exit the loop after removal
+                    break;
                 }
                 EditorGUILayout.EndHorizontal();
                
             }
+
             if (GUILayout.Button("Add Dependency", GUILayout.Width(150)))
             {
-                // Add a new empty entry to the dictionary
-                string uniqueID =  DateTime.Now.Ticks.ToString();//Guid.NewGuid();
+                string uniqueID = DateTime.Now.Ticks.ToString();
                 _jsonData.Dependencies.Add($"Package Name {uniqueID}", "Version");
             }
 
