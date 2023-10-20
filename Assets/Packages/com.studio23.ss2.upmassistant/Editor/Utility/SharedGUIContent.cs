@@ -44,7 +44,7 @@ namespace Studio23.SS2.UPMAssistant.Editor.Data
                     var licenseFilePath =
                         Path.Combine(DataHandler.Root + DataHandler.GetSavedPackagedName(), DataHandler.LicenseMD);
                     if (File.Exists(licenseFilePath))
-                        FileEditorWindowController.ShowWindow(licenseFilePath);
+                        FileEditorWindowController.Instance.ShowWindow(licenseFilePath);
                     else  Debug.LogError("License file not found!");
                 }
                

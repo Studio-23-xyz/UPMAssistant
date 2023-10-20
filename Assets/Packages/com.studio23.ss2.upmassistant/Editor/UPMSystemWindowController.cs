@@ -191,7 +191,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
                         {
                             if (GUILayout.Button("Configure"))
                             {
-                                FileEditorWindowController.ShowWindow(fileExist);
+                                FileEditorWindowController.Instance.ShowWindow(fileExist);
                             }
                         }
                            
@@ -268,8 +268,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
            if (!Directory.Exists(packageDirectory))
            {
                Directory.CreateDirectory(packageDirectory);
-               Debug.Log("Folder structure created: " + packageDirectory);
            }
+           
            foreach (var entry in DataHandler.FolderAndFilesList)
            {
                if (entry.Value)
@@ -313,8 +313,8 @@ namespace Studio23.SS2.UPMAssistant.Editor
            
            var assemblyDefinitionContent = DataHandler.GetAssemblyDefinitionContent(fileName);
            
-           string directory = Path.GetDirectoryName(filePath); //string fileName = Path.GetFileName(filePath);
-           
+           string directory = Path.GetDirectoryName(filePath); 
+           // Create directory if it doesn't exist
            if (!Directory.Exists(directory))
            {
                if (directory != null) Directory.CreateDirectory(directory);
@@ -331,9 +331,13 @@ namespace Studio23.SS2.UPMAssistant.Editor
        {
            if (!AssetDatabase.IsValidFolder(filePath))
            {
-               AssetDatabase.CreateFolder(Path.GetDirectoryName(filePath), Path.GetFileName(filePath));
-               Debug.Log("Folder created: " + filePath);
+               Directory.CreateDirectory(filePath);
+               Debug.Log($"Folder created: {filePath}");
            }
+           else{
+               Debug.Log($"Folder already exists: {filePath}");
+           }
+           
        }
     }
 }
