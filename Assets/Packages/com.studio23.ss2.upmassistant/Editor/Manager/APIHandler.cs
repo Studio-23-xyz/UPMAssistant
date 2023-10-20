@@ -1,108 +1,105 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.Networking;
-using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
 using Studio23.SS2.UPMAssistant.Editor.Data;
 using UnityEditor;
-
+using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Studio23.SS2.UPMAssistant.Editor
-{ 
-    public static class APIHandler  
 {
-    
-    private const string ApiURL = "https://api.github.com/licenses";
-    public static int SelectedLicenceIndex;
-    public static List<GitHubLicense> GitHubLicense;
-    public static bool IsDownloading = false;
- 
-    private static string _selectedLicenceURL; 
-    
-    public static void FetchOnlineGitLicenses()
+    public static class APIHandler
     {
-        _selectedLicenceURL = DataHandler.GetSavedLicenseURL();
-        UnityWebRequest www = UnityWebRequest.Get(ApiURL);
-        www.SendWebRequest().completed += FetchLicensesCallback;
-    }
-    private static void FetchLicensesCallback(AsyncOperation operation)
-    {
-        UnityWebRequest www = ((UnityWebRequestAsyncOperation)operation).webRequest;
+        private const string ApiURL = "https://api.github.com/licenses";
+        public static int SelectedLicenceIndex;
+        public static List<GitHubLicense> GitHubLicense;
+        public static bool IsDownloading;
 
-        switch (www.result)
+        private static string _selectedLicenceURL;
+
+        public static void FetchOnlineGitLicenses()
         {
-            case UnityWebRequest.Result.ConnectionError:
-                Debug.LogError("ConnectionError: " + www.error);
-                break;
-            case UnityWebRequest.Result.ProtocolError:
-                Debug.LogError("ProtocolError: " + www.error);
-                break;
-            default:
-            {
-                string jsonResponse = www.downloadHandler.text;
-                GitHubLicense = JsonConvert.DeserializeObject<List<GitHubLicense>>(jsonResponse);
-                SelectedLicenceIndex =  GetLicenseIndex(_selectedLicenceURL);
-                break;
-            }
+            _selectedLicenceURL = DataHandler.GetSavedLicenseURL();
+            var www = UnityWebRequest.Get(ApiURL);
+            www.SendWebRequest().completed += FetchLicensesCallback;
         }
-    }
-    
-   
-    public static void DownloadLicence()
-    {
-        IsDownloading = true;
-        UnityWebRequest www = UnityWebRequest.Get(DataHandler.GetSavedLicenseURL());
-            www.SendWebRequest().completed += FetchLicensesCallback2;
-    }
-    private static void FetchLicensesCallback2(AsyncOperation operation)
-    {
-        UnityWebRequest www = ((UnityWebRequestAsyncOperation)operation).webRequest;
 
-        switch (www.result)
+        private static void FetchLicensesCallback(AsyncOperation operation)
         {
-            case UnityWebRequest.Result.ConnectionError:
-                Debug.LogError("ConnectionError: " + www.error);
-                break;
-            case UnityWebRequest.Result.ProtocolError:
-                Debug.LogError("ProtocolError: " + www.error);
-                break;
-            default:
+            var www = ((UnityWebRequestAsyncOperation) operation).webRequest;
+
+            switch (www.result)
             {
-                string jsonResponse = www.downloadHandler.text;
-                var license = JsonConvert.DeserializeObject<License>(jsonResponse);
-                var licenseFilePath =
-                    Path.Combine(DataHandler.Root, DataHandler.GetSavedPackagedName(), DataHandler.LicenseMD);
-                if (!File.Exists(licenseFilePath))
+                case UnityWebRequest.Result.ConnectionError:
+                    Debug.LogError("ConnectionError: " + www.error);
+                    break;
+                case UnityWebRequest.Result.ProtocolError:
+                    Debug.LogError("ProtocolError: " + www.error);
+                    break;
+                default:
                 {
-                    Debug.LogError("License file not found!");
-                    return;
+                    var jsonResponse = www.downloadHandler.text;
+                    GitHubLicense = JsonConvert.DeserializeObject<List<GitHubLicense>>(jsonResponse);
+                    SelectedLicenceIndex = GetLicenseIndex(_selectedLicenceURL);
+                    break;
                 }
-                File.WriteAllTextAsync(licenseFilePath, string.Empty);
-                File.WriteAllTextAsync(licenseFilePath, license.Body);
-                AssetDatabase.Refresh();
-                break;
             }
         }
-        IsDownloading = false;
-    }
-    public static int GetLicenseIndex(string url)
-    {
-        int currentSelectedLicence = 0;
-        if (GitHubLicense is {Count: > 0})
+
+        public static void DownloadLicence()
         {
-            currentSelectedLicence = GitHubLicense.IndexOf(GitHubLicense.Find(x => x.URL == url));
+            IsDownloading = true;
+            var www = UnityWebRequest.Get(DataHandler.GetSavedLicenseURL());
+            www.SendWebRequest().completed += FetchLicensesCallback2;
         }
-        return currentSelectedLicence;
-    }
-    public static string GetLicenseURL()
-    {
-        var currentSelectedLicence = DataHandler.DefaultLicenceURL;
-        if (GitHubLicense is {Count: > 0})
+
+        private static void FetchLicensesCallback2(AsyncOperation operation)
         {
-            currentSelectedLicence = GitHubLicense[SelectedLicenceIndex].URL;
+            var www = ((UnityWebRequestAsyncOperation) operation).webRequest;
+
+            switch (www.result)
+            {
+                case UnityWebRequest.Result.ConnectionError:
+                    Debug.LogError("ConnectionError: " + www.error);
+                    break;
+                case UnityWebRequest.Result.ProtocolError:
+                    Debug.LogError("ProtocolError: " + www.error);
+                    break;
+                default:
+                {
+                    var jsonResponse = www.downloadHandler.text;
+                    var license = JsonConvert.DeserializeObject<License>(jsonResponse);
+                    var licenseFilePath = Path.Combine(DataHandler.Root, DataHandler.GetSavedPackagedName(),
+                        DataHandler.LicenseMD);
+                    if (!File.Exists(licenseFilePath))
+                    {
+                        Debug.LogError("License file not found!");
+                        return;
+                    }
+
+                    File.WriteAllTextAsync(licenseFilePath, string.Empty);
+                    File.WriteAllTextAsync(licenseFilePath, license.Body);
+                    AssetDatabase.Refresh();
+                    break;
+                }
+            }
+
+            IsDownloading = false;
         }
-        return currentSelectedLicence;
+
+        public static int GetLicenseIndex(string url)
+        {
+            var currentSelectedLicence = 0;
+            if (GitHubLicense is {Count: > 0})
+                currentSelectedLicence = GitHubLicense.IndexOf(GitHubLicense.Find(x => x.URL == url));
+            return currentSelectedLicence;
+        }
+
+        public static string GetLicenseURL()
+        {
+            var currentSelectedLicence = DataHandler.DefaultLicenceURL;
+            if (GitHubLicense is {Count: > 0}) currentSelectedLicence = GitHubLicense[SelectedLicenceIndex].URL;
+            return currentSelectedLicence;
+        }
     }
-}
 }

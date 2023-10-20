@@ -1,10 +1,7 @@
-using System;
-using UnityEngine;
-using UnityEditor;
-using System.IO;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Studio23.SS2.UPMAssistant.Editor.Utilities;
+using UnityEditor;
+using UnityEngine;
 
 namespace Studio23.SS2.UPMAssistant.Editor
 {
@@ -12,19 +9,16 @@ namespace Studio23.SS2.UPMAssistant.Editor
     {
         private static string _markupText = "";
         private static string _filePath = "";
-        private float _windowWidth = 600;
-        private float _windowHeight = 600;
-        private float _textAreaHeight = 500;
+        private readonly float _windowWidth = 600;
+        private readonly float _windowHeight = 600;
+        private readonly float _textAreaHeight = 500;
         private static FileEditorWindowController _instance;
 
         public static FileEditorWindowController Instance
         {
             get
             {
-                if (_instance == null)
-                {
-                    _instance = CreateInstance<FileEditorWindowController>();
-                }
+                if (_instance == null) _instance = CreateInstance<FileEditorWindowController>();
 
                 return _instance;
             }
@@ -45,6 +39,7 @@ namespace Studio23.SS2.UPMAssistant.Editor
                 Debug.LogError("File path is empty!");
             }
         }
+
         private void OnGUI()
         {
             GUILayout.Label("UPM Editor", EditorStyles.boldLabel);
@@ -58,17 +53,11 @@ namespace Studio23.SS2.UPMAssistant.Editor
             if (GUILayout.Button("Save", GUILayout.Height(40)))
             {
                 if (!string.IsNullOrEmpty(_filePath))
-                {
-                    _filePath.WriteFileAsync(_markupText).ContinueWith(() =>
-                    {
-                        AssetDatabase.Refresh();
-                    });
-                }
+                    _filePath.WriteFileAsync(_markupText).ContinueWith(() => { AssetDatabase.Refresh(); });
                 else
-                {
                     Debug.LogError("File path is empty!");
-                }
             }
+
             GUI.backgroundColor = Color.white; // Reset the background color
             EditorGUI.EndDisabledGroup();
         }
@@ -76,16 +65,9 @@ namespace Studio23.SS2.UPMAssistant.Editor
         private void OnDisable()
         {
             if (!string.IsNullOrEmpty(_filePath))
-            {
-                _filePath.WriteFileAsync(_markupText).ContinueWith(() =>
-                {
-                    AssetDatabase.Refresh();
-                });
-            }
+                _filePath.WriteFileAsync(_markupText).ContinueWith(() => { AssetDatabase.Refresh(); });
             else
-            {
                 Debug.LogError("File path is empty!");
-            }
         }
     }
 }

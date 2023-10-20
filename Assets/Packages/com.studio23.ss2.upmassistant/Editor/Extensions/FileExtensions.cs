@@ -3,12 +3,11 @@ using Cysharp.Threading.Tasks;
 
 namespace Studio23.SS2.UPMAssistant.Editor.Utilities
 {
-
     public static class FileExtensions
     {
         public static async UniTask<string> ReadFileAsync(this string filePath)
         {
-            using (StreamReader reader = new StreamReader(filePath))
+            using (var reader = new StreamReader(filePath))
             {
                 return await reader.ReadToEndAsync().AsUniTask();
             }
@@ -16,7 +15,7 @@ namespace Studio23.SS2.UPMAssistant.Editor.Utilities
 
         public static async UniTask WriteFileAsync(this string filePath, string content)
         {
-            using (StreamWriter writer = new StreamWriter(filePath))
+            using (var writer = new StreamWriter(filePath))
             {
                 await writer.WriteAsync(content).AsUniTask();
             }

@@ -1,8 +1,10 @@
-﻿namespace Studio23.SS2.UPMAssistant.Editor.Data
+﻿using Newtonsoft.Json;
+
+namespace Studio23.SS2.UPMAssistant.Editor.Data
 {
     public class PackageDependency
     {
-        public string name;
-        public string version;
+        [JsonProperty("name")] public string Name;
+        [JsonProperty("version")] public string Version;
     }
 }

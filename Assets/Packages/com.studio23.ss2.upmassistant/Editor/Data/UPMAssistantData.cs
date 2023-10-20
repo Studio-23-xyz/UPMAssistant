@@ -2,8 +2,7 @@ using System;
 
 namespace Studio23.SS2.UPMAssistant.Editor.Data
 {
-    [System.Serializable]
-
+    [Serializable]
     public class PackageNameData
     {
         public string PackageName;
