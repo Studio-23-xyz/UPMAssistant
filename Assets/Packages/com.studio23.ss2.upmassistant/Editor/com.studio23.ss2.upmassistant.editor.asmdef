@@ -1,7 +1,9 @@
 {
     "name": "com.studio23.ss2.upmassistant.editor",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+    ],
     "includePlatforms": [
         "Editor"
     ],
