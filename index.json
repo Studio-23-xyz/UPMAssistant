@@ -1,0 +1,122 @@
+{
+  "api/Global.License.html": {
+    "href": "api/Global.License.html",
+    "title": "Class License | |",
+    "keywords": "Class License Namespace Global public class License Inheritance object License Inherited Members object.Equals(object) object.Equals(object, object) object.GetHashCode() object.GetType() object.MemberwiseClone() object.ReferenceEquals(object, object) object.ToString() Fields Body public string Body Field Value string Conditions public List<string> Conditions Field Value List<string> Description public string Description Field Value string Featured public bool Featured Field Value bool HtmlURL public string HtmlURL Field Value string Implementation public string Implementation Field Value string Key public string Key Field Value string Limitations public List<string> Limitations Field Value List<string> Name public string Name Field Value string NodeId public string NodeId Field Value string Permissions public List<string> Permissions Field Value List<string> SPDXId public string SPDXId Field Value string URL public string URL Field Value string"
+  },
+  "api/Global.html": {
+    "href": "api/Global.html",
+    "title": "Namespace | |",
+    "keywords": "Namespace Classes License"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.APIHandler.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.APIHandler.html",
+    "title": "Class APIHandler | |",
+    "keywords": "Class APIHandler Namespace Studio23.SS2.UPMAssistant.Editor public static class APIHandler Inheritance object APIHandler Inherited Members object.Equals(object) object.Equals(object, object) object.GetHashCode() object.GetType() object.MemberwiseClone() object.ReferenceEquals(object, object) object.ToString() Fields GitHubLicense public static List<GitHubLicense> GitHubLicense Field Value List<GitHubLicense> IsDownloading public static bool IsDownloading Field Value bool SelectedLicenceIndex public static int SelectedLicenceIndex Field Value int Methods DownloadLicence() public static void DownloadLicence() FetchOnlineGitLicenses() public static void FetchOnlineGitLicenses() GetLicenseIndex(string) public static int GetLicenseIndex(string url) Parameters url string Returns int GetLicenseURL() public static string GetLicenseURL() Returns string"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.Data.Author.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.Data.Author.html",
+    "title": "Class Author | |",
+    "keywords": "Class Author Namespace Studio23.SS2.UPMAssistant.Editor.Data public class Author Inheritance object Author Inherited Members object.Equals(object) object.Equals(object, object) object.GetHashCode() object.GetType() object.MemberwiseClone() object.ReferenceEquals(object, object) object.ToString() Fields Email public string Email Field Value string Name public string Name Field Value string URL public string URL Field Value string"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.Data.GitHubLicense.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.Data.GitHubLicense.html",
+    "title": "Class GitHubLicense | |",
+    "keywords": "Class GitHubLicense Namespace Studio23.SS2.UPMAssistant.Editor.Data public class GitHubLicense Inheritance object GitHubLicense Inherited Members object.Equals(object) object.Equals(object, object) object.GetHashCode() object.GetType() object.MemberwiseClone() object.ReferenceEquals(object, object) object.ToString() Properties Key public string Key { get; set; } Property Value string Name public string Name { get; set; } Property Value string URL public string URL { get; set; } Property Value string"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.Data.LicenseURLData.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.Data.LicenseURLData.html",
+    "title": "Class LicenseURLData | |",
+    "keywords": "Class LicenseURLData Namespace Studio23.SS2.UPMAssistant.Editor.Data [Serializable] public class LicenseURLData Inheritance object LicenseURLData Inherited Members object.Equals(object) object.Equals(object, object) object.GetHashCode() object.GetType() object.MemberwiseClone() object.ReferenceEquals(object, object) object.ToString() Fields LicenseURL public string LicenseURL Field Value string"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.Data.PackageDependency.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.Data.PackageDependency.html",
+    "title": "Class PackageDependency | |",
+    "keywords": "Class PackageDependency Namespace Studio23.SS2.UPMAssistant.Editor.Data public class PackageDependency Inheritance object PackageDependency Inherited Members object.Equals(object) object.Equals(object, object) object.GetHashCode() object.GetType() object.MemberwiseClone() object.ReferenceEquals(object, object) object.ToString() Fields Name public string Name Field Value string Version public string Version Field Value string"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.Data.PackageJsonData.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.Data.PackageJsonData.html",
+    "title": "Class PackageJsonData | |",
+    "keywords": "Class PackageJsonData Namespace Studio23.SS2.UPMAssistant.Editor.Data public class PackageJsonData Inheritance object PackageJsonData Inherited Members object.Equals(object) object.Equals(object, object) object.GetHashCode() object.GetType() object.MemberwiseClone() object.ReferenceEquals(object, object) object.ToString() Constructors PackageJsonData() public PackageJsonData() Fields Author public Author Author Field Value Author ChangelogUrl public string ChangelogUrl Field Value string Dependencies public Dictionary<string, string> Dependencies Field Value Dictionary<string, string> Description public string Description Field Value string DisplayName public string DisplayName Field Value string DocumentationUrl public string DocumentationUrl Field Value string Keywords public List<string> Keywords Field Value List<string> LicensesUrl public string LicensesUrl Field Value string Name public string Name Field Value string ScopedRegistries public List<ScopedRegistry> ScopedRegistries Field Value List<ScopedRegistry> Unity public string Unity Field Value string UnityRelease public string UnityRelease Field Value string Version public string Version Field Value string"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.Data.PackageNameData.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.Data.PackageNameData.html",
+    "title": "Class PackageNameData | |",
+    "keywords": "Class PackageNameData Namespace Studio23.SS2.UPMAssistant.Editor.Data [Serializable] public class PackageNameData Inheritance object PackageNameData Inherited Members object.Equals(object) object.Equals(object, object) object.GetHashCode() object.GetType() object.MemberwiseClone() object.ReferenceEquals(object, object) object.ToString() Fields PackageName public string PackageName Field Value string"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.Data.ScopedRegistry.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.Data.ScopedRegistry.html",
+    "title": "Class ScopedRegistry | |",
+    "keywords": "Class ScopedRegistry Namespace Studio23.SS2.UPMAssistant.Editor.Data public class ScopedRegistry Inheritance object ScopedRegistry Inherited Members object.Equals(object) object.Equals(object, object) object.GetHashCode() object.GetType() object.MemberwiseClone() object.ReferenceEquals(object, object) object.ToString() Fields Name public string Name Field Value string Scopes public List<string> Scopes Field Value List<string> URL public string URL Field Value string"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.Data.SharedGUIContent.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.Data.SharedGUIContent.html",
+    "title": "Class SharedGUIContent | |",
+    "keywords": "Class SharedGUIContent Namespace Studio23.SS2.UPMAssistant.Editor.Data public class SharedGUIContent : ScriptableObject Inheritance object SharedGUIContent Properties Instance public static SharedGUIContent Instance { get; } Property Value SharedGUIContent Methods DrawGUIContent() public void DrawGUIContent()"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.Data.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.Data.html",
+    "title": "Namespace Studio23.SS2.UPMAssistant.Editor.Data | |",
+    "keywords": "Namespace Studio23.SS2.UPMAssistant.Editor.Data Classes Author GitHubLicense LicenseURLData PackageDependency PackageJsonData PackageNameData ScopedRegistry SharedGUIContent"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.DataHandler.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.DataHandler.html",
+    "title": "Class DataHandler | |",
+    "keywords": "Class DataHandler Namespace Studio23.SS2.UPMAssistant.Editor public static class DataHandler Inheritance object DataHandler Inherited Members object.Equals(object) object.Equals(object, object) object.GetHashCode() object.GetType() object.MemberwiseClone() object.ReferenceEquals(object, object) object.ToString() Fields ChangelogMD public const string ChangelogMD = \"CHANGELOG.md\" Field Value string DefaultLicenceURL public const string DefaultLicenceURL = \"https://api.github.com/licenses/mit\" Field Value string DefaultPackageName public const string DefaultPackageName = \"com.[companyname].[project].[packagename]\" Field Value string FolderAndFilesList public static Dictionary<string, bool> FolderAndFilesList Field Value Dictionary<string, bool> LicenseMD public const string LicenseMD = \"LICENSE.md\" Field Value string PackageJson public const string PackageJson = \"package.json\" Field Value string ReadmeMD public const string ReadmeMD = \"README.md\" Field Value string Root public const string Root = \"Assets/Packages\" Field Value string ThirdPartyNoticesMD public const string ThirdPartyNoticesMD = \"ThirdPartyNotices.md\" Field Value string Methods DeletedSaveData() public static void DeletedSaveData() GetAssemblyDefinitionContent(string) public static string GetAssemblyDefinitionContent(string fileName) Parameters fileName string Returns string GetSavedLicenseURL() public static string GetSavedLicenseURL() Returns string GetSavedPackagedName() public static string GetSavedPackagedName() Returns string Initialized() public static void Initialized() SaveLicenseURLData(string) public static void SaveLicenseURLData(string licenseURL) Parameters licenseURL string SavePackageNameData(string) public static void SavePackageNameData(string packageName) Parameters packageName string"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.FileEditorWindowController.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.FileEditorWindowController.html",
+    "title": "Class FileEditorWindowController | |",
+    "keywords": "Class FileEditorWindowController Namespace Studio23.SS2.UPMAssistant.Editor public class FileEditorWindowController : EditorWindow Inheritance object FileEditorWindowController Properties Instance public static FileEditorWindowController Instance { get; } Property Value FileEditorWindowController Methods ShowWindow(string) public void ShowWindow(string path) Parameters path string"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.PackageHandler.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.PackageHandler.html",
+    "title": "Class PackageHandler | |",
+    "keywords": "Class PackageHandler Namespace Studio23.SS2.UPMAssistant.Editor public static class PackageHandler Inheritance object PackageHandler Inherited Members object.Equals(object) object.Equals(object, object) object.GetHashCode() object.GetType() object.MemberwiseClone() object.ReferenceEquals(object, object) object.ToString() Fields FilePath public static string FilePath Field Value string Methods CheckUpdateOnDisabledProperties(PackageJsonData) public static PackageJsonData CheckUpdateOnDisabledProperties(PackageJsonData jsonData) Parameters jsonData PackageJsonData Returns PackageJsonData LoadData() public static PackageJsonData LoadData() Returns PackageJsonData SaveData(PackageJsonData) public static void SaveData(PackageJsonData newJsonData) Parameters newJsonData PackageJsonData"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.PackageJsonWindowController.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.PackageJsonWindowController.html",
+    "title": "Class PackageJsonWindowController | |",
+    "keywords": "Class PackageJsonWindowController Namespace Studio23.SS2.UPMAssistant.Editor public class PackageJsonWindowController : EditorWindow Inheritance object PackageJsonWindowController Methods CreateWizard() public static void CreateWizard()"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.UPMSystemWindowController.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.UPMSystemWindowController.html",
+    "title": "Class UPMSystemWindowController | |",
+    "keywords": "Class UPMSystemWindowController Namespace Studio23.SS2.UPMAssistant.Editor public class UPMSystemWindowController : EditorWindow Inheritance object UPMSystemWindowController Methods ShowWindow() public static void ShowWindow()"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.Utilities.FileExtensions.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.Utilities.FileExtensions.html",
+    "title": "Class FileExtensions | |",
+    "keywords": "Class FileExtensions Namespace Studio23.SS2.UPMAssistant.Editor.Utilities public static class FileExtensions Inheritance object FileExtensions Inherited Members object.Equals(object) object.Equals(object, object) object.GetHashCode() object.GetType() object.MemberwiseClone() object.ReferenceEquals(object, object) object.ToString() Methods ReadFileAsync(string) public static UniTask<string> ReadFileAsync(this string filePath) Parameters filePath string Returns UniTask<string> WriteFileAsync(string, string) public static UniTask WriteFileAsync(this string filePath, string content) Parameters filePath string content string Returns UniTask"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.Utilities.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.Utilities.html",
+    "title": "Namespace Studio23.SS2.UPMAssistant.Editor.Utilities | |",
+    "keywords": "Namespace Studio23.SS2.UPMAssistant.Editor.Utilities Classes FileExtensions"
+  },
+  "api/Studio23.SS2.UPMAssistant.Editor.html": {
+    "href": "api/Studio23.SS2.UPMAssistant.Editor.html",
+    "title": "Namespace Studio23.SS2.UPMAssistant.Editor | |",
+    "keywords": "Namespace Studio23.SS2.UPMAssistant.Editor Classes APIHandler DataHandler FileEditorWindowController PackageHandler PackageJsonWindowController UPMSystemWindowController"
+  },
+  "api/index.html": {
+    "href": "api/index.html",
+    "title": "| |",
+    "keywords": "This is the documentation for the Scripting APIs of this package."
+  },
+  "index.html": {
+    "href": "index.html",
+    "title": "| |",
+    "keywords": "This page redirects to the manual."
+  },
+  "license/LICENSE.html": {
+    "href": "license/LICENSE.html",
+    "title": "| |",
+    "keywords": "MIT License Copyright (c) 2023 Md Maruf Billa Opu Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+  },
+  "manual/index.html": {
+    "href": "manual/index.html",
+    "title": "Unity Package Manager Assistant | |",
+    "keywords": "Unity Package Manager Assistant The UPM Assistant is an editor extension tool designed to simplify the process of creating folder structures required for Unity packages that are published on https://openupm.com/. This tool automates the generation of the necessary directory hierarchy, ensuring that package assets are organized correctly and adhere to the standards of Unity's package management system. This tool also allows users to generate and customize package.json files, facilitating seamless publishing on the platforms Table of Contents Installation Usage [Automated Folder Structure Creation](#Automated Folder Structure Creation) [Customization package.json](#Customization package.json) Example License Installation Install via Git URL You can also use the \"Install from Git URL\" option from Unity Package Manager to install the package. https://github.com/Studio-23-xyz/UPMAssistant.git#upm Usage Automated Folder Structure Creation This tool automatically generates the necessary directories, including 'Editor', 'Runtime', 'Tests', and other essential folders, ensuring the package structure aligns with Unity's guidelines. To create the automated folder structure, navigate to UPM -> UPM System Generator. A popup editor window will open; enter your package name, select the necessary files/folders from the left radio buttons, and click on the 'Generate' button to create your folder directory along with the mentioned files. Customizing package.json This Package Creator allows users to customize the package.json file, including essential details such as package name, version, description, and dependencies. This customization ensures that packages are accurately represented and easily understandable. To create or update manifest.json, navigate to UPM -> Generate manifest.json. A popup window will open; enter your necessary information and click on the 'Generate' button at the bottom of the window. Before customization package.json, generate folder structure from UPM System Generator"
+  }
+}

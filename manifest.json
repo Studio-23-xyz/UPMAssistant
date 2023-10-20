@@ -1,0 +1,304 @@
+{
+  "sitemap": {
+    "baseUrl": "https://studio-23-xyz.github.io/UPMAssistant/"
+  },
+  "source_base_path": "/home/runner/work/UPMAssistant/UPMAssistant/Documentation~",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "Resource",
+      "output": {
+        "resource": {
+          "relative_path": "index.json"
+        }
+      }
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Global.License.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Global.License.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Global.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Global.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.APIHandler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.APIHandler.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.Author.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.Author.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.GitHubLicense.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.GitHubLicense.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.LicenseURLData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.LicenseURLData.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.PackageDependency.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.PackageDependency.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.PackageJsonData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.PackageJsonData.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.PackageNameData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.PackageNameData.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.ScopedRegistry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.ScopedRegistry.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.SharedGUIContent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.SharedGUIContent.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Data.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.DataHandler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.DataHandler.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.FileEditorWindowController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.FileEditorWindowController.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.PackageHandler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.PackageHandler.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.PackageJsonWindowController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.PackageJsonWindowController.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.UPMSystemWindowController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.UPMSystemWindowController.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Utilities.FileExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Utilities.FileExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Utilities.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.Utilities.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Studio23.SS2.UPMAssistant.Editor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Studio23.SS2.UPMAssistant.Editor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html"
+        },
+        ".json": {
+          "relative_path": "api/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "license/LICENSE.md",
+      "output": {
+        ".html": {
+          "relative_path": "license/LICENSE.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "license/toc.md",
+      "output": {
+        ".html": {
+          "relative_path": "license/toc.html"
+        },
+        ".json": {
+          "relative_path": "license/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "manual/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "manual/index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html"
+        },
+        ".json": {
+          "relative_path": "toc.json"
+        }
+      },
+      "version": ""
+    }
+  ],
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}

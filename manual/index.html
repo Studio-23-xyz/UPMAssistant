@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Unity Package Manager Assistant |  |  </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Unity Package Manager Assistant |  |  ">
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/Studio-23-xyz/UPMAssistant/blob/main/Documentation~/manual/index.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="landing" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="unity-package-manager-assistant">Unity Package Manager Assistant</h1>
+
+<p>The UPM Assistant is an editor extension tool designed to simplify the process of creating folder structures required for Unity packages that are published on <a href="https://openupm.com/">https://openupm.com/</a>. This tool automates the generation of the necessary directory hierarchy, ensuring that package assets are organized correctly and adhere to the standards of Unity's package management system. This tool also allows users to generate and customize package.json files, facilitating seamless publishing on the platforms</p>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><p><a href="#installation">Installation</a></p>
+</li>
+<li><p><a href="#usage">Usage</a></p>
+<ul>
+<li>[Automated Folder Structure Creation](#Automated Folder Structure Creation)</li>
+<li>[Customization package.json](#Customization package.json)</li>
+</ul>
+</li>
+<li><p><a href="#example">Example</a></p>
+</li>
+<li><p><a href="#license">License</a></p>
+</li>
+</ol>
+<h2 id="installation">Installation</h2>
+<h3 id="install-via-git-url">Install via Git URL</h3>
+<p>You can also use the &quot;Install from Git URL&quot; option from Unity Package Manager to install the package.</p>
+<pre><code>https://github.com/Studio-23-xyz/UPMAssistant.git#upm
+</code></pre>
+<h2 id="usage">Usage</h2>
+<h3 id="automated-folder-structure-creation">Automated Folder Structure Creation</h3>
+<p>This tool automatically generates the necessary directories, including 'Editor', 'Runtime', 'Tests', and other essential folders, ensuring the package structure aligns with Unity's guidelines.</p>
+<p>To create the automated folder structure, navigate to UPM -&gt; UPM System Generator. A popup editor window will open; enter your package name, select the necessary files/folders from the left radio buttons, and click on the 'Generate' button to create your folder directory along with the mentioned files.</p>
+<h3 id="customizing-packagejson">Customizing package.json</h3>
+<p>This Package Creator allows users to customize the package.json file, including essential details such as package name, version, description, and dependencies. This customization ensures that packages are accurately represented and easily understandable.</p>
+<p>To create or update manifest.json, navigate to UPM -&gt; Generate manifest.json. A popup window will open; enter your necessary information and click on the 'Generate' button at the bottom of the window.</p>
+<p><em>Before customization package.json, generate folder structure from UPM System Generator</em></p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Studio-23-xyz/UPMAssistant/blob/main/Documentation~/manual/index.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made by <a href="https://github.com/Studio-23-xyz" target="_blank">Studio-23-xyz</a> using <a href="https://dotnet.github.io/docfx" target="_blank">DocFX</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
